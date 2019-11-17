@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="app_bar_height">250dp</dimen>
+    <dimen name="item_width">200dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+
+    <dimen name="title_font">40sp</dimen>
+    <dimen name="subtitle_font">35sp</dimen>
+    <dimen name="normal_font">30sp</dimen>
+    <dimen name="small_font">25sp</dimen>
+    <dimen name="extra_small_font">20sp</dimen>
+    <dimen name="extra_extra_small_font">18sp</dimen>
+</resources>
