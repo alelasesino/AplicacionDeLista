@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,7 +28,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_list);
+        setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,6 +85,13 @@ public class ItemListActivity extends AppCompatActivity {
 
         startActivity(intent, options.toBundle());
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
 }

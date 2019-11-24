@@ -8,20 +8,6 @@
     android:orientation="vertical"
     android:background="@color/colorBackground">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
     <include
         layout="@layout/item_list"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
