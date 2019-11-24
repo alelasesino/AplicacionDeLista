@@ -1,9 +1,7 @@
 package com.alejandro.aplicaciondelista.adapters;
 
-import android.animation.Animator;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
@@ -36,7 +34,7 @@ public class AnimalItemViewAdapter extends RecyclerView.Adapter<AnimalItemViewAd
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         LayoutInflater layout = LayoutInflater.from(parent.getContext());
-        View view = layout.inflate(R.layout.item_list_content2, parent, false);
+        View view = layout.inflate(R.layout.item_list_content, parent, false);
 
         return new ItemViewHolder(view);
 

@@ -3,15 +3,14 @@ package com.alejandro.aplicaciondelista;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Fade;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
@@ -28,7 +27,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_item_list);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,6 +63,8 @@ public class ItemListActivity extends AppCompatActivity {
 
         ItemDetailFragment fragment = new ItemDetailFragment();
         fragment.setArguments(arguments);
+        fragment.setEnterTransition(new Fade());
+        fragment.setExitTransition(new Fade());
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.item_detail_container, fragment)

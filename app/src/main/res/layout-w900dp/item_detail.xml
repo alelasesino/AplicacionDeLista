@@ -13,7 +13,7 @@
         android:scaleType="centerCrop"
         android:layout_gravity="center_horizontal"/>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/item_detail"
         style="?android:attr/textAppearanceLarge"

@@ -1,61 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:elevation="0dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:layout_marginVertical="5dp"
-    android:layout_marginHorizontal="10dp"
+    android:background="#FFFFFF"
     style="@style/CardViewTheme"
-    app:cardCornerRadius="5dp">
+    app:cardCornerRadius="3dp">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="100">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="30"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginHorizontal="10dp"
             android:gravity="center">
 
             <ImageView
                 android:id="@+id/card_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/download"
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:src="@drawable/burger"
+                android:scaleType="fitCenter"
                 android:transitionName="card_image_transition"
-                android:scaleType="centerCrop"/>
+                />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="70"
-            android:gravity="center_vertical"
-            android:paddingStart="15dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/title_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Title Card"
-                style="@style/CardViewTheme"
-                android:textSize="32sp"/>
+                android:text="Cheese Burguer"
+                android:textSize="21sp"
+                android:textColor="#B9000000"
+                android:fontFamily="@font/insanibu"
+                android:textAlignment="center"/>
 
             <TextView
                 android:id="@+id/subtitle_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Small plates and sandwiches an intimate setting with 12..."
-                style="@style/CardViewTheme"
+                android:text="Delicius cheese with bacon, the best burguer you can eat"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textColor="#8D000000"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
                 android:textSize="15sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2,50 €"
+                android:layout_gravity="end"
+                android:layout_margin="5dp"
+                android:textFontWeight="500"
+                android:fontFamily="sans-serif-black"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/price_label_background"/>
 
         </LinearLayout>
 
