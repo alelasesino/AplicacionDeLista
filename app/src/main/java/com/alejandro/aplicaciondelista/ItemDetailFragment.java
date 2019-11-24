@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -40,8 +41,10 @@ public class ItemDetailFragment extends Fragment {
         if(activity != null)
             appBarLayout = activity.findViewById(R.id.toolbar_layout);
 
-        if (appBarLayout != null)
+        if (appBarLayout != null){
             appBarLayout.setTitle(currentItem.title);
+            appBarLayout.setExpandedTitleColor(ContextCompat.getColor(activity, R.color.foregroundOnPrimary));
+        }
 
     }
 

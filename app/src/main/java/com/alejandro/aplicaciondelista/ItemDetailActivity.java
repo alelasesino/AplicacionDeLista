@@ -1,5 +1,6 @@
 package com.alejandro.aplicaciondelista;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -8,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Pair;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,8 +56,11 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
 
-        if (actionBar != null)
+        if (actionBar != null){
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black);
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
 
     }
 
@@ -69,7 +74,8 @@ public class ItemDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            navigateUpTo(new Intent(this, ItemListActivity.class));
+            onBackPressed();
+            //navigateUpTo(new Intent(this, ItemListActivity.class), options.toBundle());
             return true;
         }
         return super.onOptionsItemSelected(item);

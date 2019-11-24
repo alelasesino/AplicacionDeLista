@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -22,31 +22,8 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <include
+        layout="@layout/item_list"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <include layout="@layout/item_list" />
-
-    </FrameLayout>
-
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        app:fab_addButtonColorNormal="@color/colorAccent"
-        app:fab_addButtonPlusIconColor="#FFFFFF"
-        app:fab_labelStyle="@style/FabCustomTheme">
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_size="mini"
-            app:fab_icon="@drawable/ic_add"/>
-
-    </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

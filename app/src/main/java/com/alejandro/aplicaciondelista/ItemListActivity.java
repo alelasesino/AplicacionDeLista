@@ -1,10 +1,16 @@
 package com.alejandro.aplicaciondelista;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
@@ -37,15 +43,16 @@ public class ItemListActivity extends AppCompatActivity {
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
 
         recyclerView.setAdapter(new AnimalItemViewAdapter(ItemContent.ITEMS, this::onCardItemClick));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, largeScreen));
 
     }
 
-    void onCardItemClick(ItemContent.DummyItem item){
+    void onCardItemClick(View card, ItemContent.DummyItem item){
 
         if (largeScreen)
             launchItemDetailFragment(item);
         else
-            launchItemDetailActivity(item);
+            launchItemDetailActivity(card, item);
 
     }
 
@@ -63,12 +70,19 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    private void launchItemDetailActivity(ItemContent.DummyItem item){
+    private void launchItemDetailActivity(View card, ItemContent.DummyItem item){
 
         Intent intent = new Intent(this, ItemDetailActivity.class);
         intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id);
 
-        startActivity(intent);
+        ImageView img = card.findViewById(R.id.card_image);
+
+        Pair[] pairs = new Pair[1];
+        pairs[0] = new Pair<View, String>(img, "card_image_transition");
+
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,pairs);
+
+        startActivity(intent, options.toBundle());
 
     }
 

@@ -23,13 +23,17 @@
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:background="#FFFFFF"
             app:toolbarId="@+id/toolbar">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/download"
-                android:scaleType="centerCrop"/>
+                android:src="@drawable/burger"
+                android:transitionName="card_image_transition"
+                android:scaleType="fitCenter"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="65dp"/>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/detail_toolbar"

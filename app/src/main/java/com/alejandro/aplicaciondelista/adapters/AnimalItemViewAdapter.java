@@ -5,6 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,7 +36,7 @@ public class AnimalItemViewAdapter extends RecyclerView.Adapter<AnimalItemViewAd
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         LayoutInflater layout = LayoutInflater.from(parent.getContext());
-        View view = layout.inflate(R.layout.item_list_content, parent, false);
+        View view = layout.inflate(R.layout.item_list_content2, parent, false);
 
         return new ItemViewHolder(view);
 
@@ -61,14 +64,20 @@ public class AnimalItemViewAdapter extends RecyclerView.Adapter<AnimalItemViewAd
 
     private void animateCircleReveal(View view){
 
-        int centerX = view.getWidth()/2;
+        /*int centerX = view.getWidth()/2;
         int centerY = view.getHeight()/2;
         int startRadius = 0;
         int endRadius = Math.max(view.getWidth(), view.getHeight());
 
         Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
         view.setVisibility(View.VISIBLE);
-        animator.start();
+        animator.start();*/
+
+        AnimationSet animation = new AnimationSet(true);
+        animation.addAnimation(new AlphaAnimation(0.0F, 1.0F));
+        animation.addAnimation(new ScaleAnimation(0.8f, 1, 0.8f, 1)); // Change args as desired
+        animation.setDuration(400);
+        view.startAnimation(animation);
 
     }
 
@@ -90,7 +99,7 @@ public class AnimalItemViewAdapter extends RecyclerView.Adapter<AnimalItemViewAd
                 int position = getAdapterPosition();
 
                 if(position != RecyclerView.NO_POSITION)
-                    cardAction.onCardItemClick(itemList.get(position));
+                    cardAction.onCardItemClick(v, itemList.get(position));
 
             });
 
@@ -100,7 +109,7 @@ public class AnimalItemViewAdapter extends RecyclerView.Adapter<AnimalItemViewAd
 
             //imageCard.setImageDrawable(item.image);
             titleCard.setText(item.title);
-            subTitleCard.setText(item.subTitle);
+            //subTitleCard.setText(item.subTitle);
 
         }
 
