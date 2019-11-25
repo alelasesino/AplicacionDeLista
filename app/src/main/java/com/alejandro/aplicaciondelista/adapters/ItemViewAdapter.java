@@ -14,16 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alejandro.aplicaciondelista.onItemCardAction;
 import com.alejandro.aplicaciondelista.R;
-import com.alejandro.aplicaciondelista.dummy.ItemContent;
+import com.alejandro.aplicaciondelista.model.ItemContent;
 
 import java.util.List;
 
-public class AnimalItemViewAdapter extends RecyclerView.Adapter<AnimalItemViewAdapter.ItemViewHolder> {
+public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
 
-    private final List<ItemContent.DummyItem> itemList;
+    private final List<ItemContent.ProductItem> itemList;
     private onItemCardAction cardAction;
 
-    public AnimalItemViewAdapter(List<ItemContent.DummyItem> items, onItemCardAction cardAction) {
+    public ItemViewAdapter(List<ItemContent.ProductItem> items, onItemCardAction cardAction) {
 
         this.cardAction = cardAction;
         itemList = items;
@@ -56,20 +56,11 @@ public class AnimalItemViewAdapter extends RecyclerView.Adapter<AnimalItemViewAd
     public void onViewAttachedToWindow(@NonNull ItemViewHolder holder) {
         super.onViewAttachedToWindow(holder);
 
-        animateCircleReveal(holder.itemView);
+        animateItemReveal(holder.itemView);
 
     }
 
-    private void animateCircleReveal(View view){
-
-        /*int centerX = view.getWidth()/2;
-        int centerY = view.getHeight()/2;
-        int startRadius = 0;
-        int endRadius = Math.max(view.getWidth(), view.getHeight());
-
-        Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-        view.setVisibility(View.VISIBLE);
-        animator.start();*/
+    private void animateItemReveal(View view){
 
         AnimationSet animation = new AnimationSet(true);
         animation.addAnimation(new AlphaAnimation(0.0F, 1.0F));
@@ -103,7 +94,7 @@ public class AnimalItemViewAdapter extends RecyclerView.Adapter<AnimalItemViewAd
 
         }
 
-        void bind(ItemContent.DummyItem item){
+        void bind(ItemContent.ProductItem item){
 
             //imageCard.setImageDrawable(item.image);
             titleCard.setText(item.title);

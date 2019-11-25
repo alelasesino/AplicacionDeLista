@@ -14,8 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
-import com.alejandro.aplicaciondelista.adapters.AnimalItemViewAdapter;
-import com.alejandro.aplicaciondelista.dummy.ItemContent;
+import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
+import com.alejandro.aplicaciondelista.model.ItemContent;
 
 /**
  * Activity principal de la aplicacion
@@ -42,12 +42,12 @@ public class ItemListActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
 
-        recyclerView.setAdapter(new AnimalItemViewAdapter(ItemContent.ITEMS, this::onCardItemClick));
+        recyclerView.setAdapter(new ItemViewAdapter(ItemContent.ITEMS, this::onCardItemClick));
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, largeScreen));
 
     }
 
-    void onCardItemClick(View card, ItemContent.DummyItem item){
+    void onCardItemClick(View card, ItemContent.ProductItem item){
 
         if (largeScreen)
             launchItemDetailFragment(item);
@@ -56,7 +56,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    private void launchItemDetailFragment(ItemContent.DummyItem item){
+    private void launchItemDetailFragment(ItemContent.ProductItem item){
 
         Bundle arguments = new Bundle();
         arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.id);
@@ -72,7 +72,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    private void launchItemDetailActivity(View card, ItemContent.DummyItem item){
+    private void launchItemDetailActivity(View card, ItemContent.ProductItem item){
 
         Intent intent = new Intent(this, ItemDetailActivity.class);
         intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id);

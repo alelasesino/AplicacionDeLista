@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/item_detail"
-    style="?android:attr/textAppearanceLarge"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:text="Details text..."
-    android:padding="16dp"
-    android:textColor="@color/foregroundOnBackground70"
-    android:textIsSelectable="true"
-    tools:context=".ItemDetailFragment" />
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceLarge"
+        android:text="Detalles del producto"
+        android:padding="16dp"
+        android:textColor="@color/colorPrimary"
+        android:textIsSelectable="true"
+        tools:context=".ItemDetailFragment"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_detail"
+        style="?android:attr/textAppearanceLarge"
+        android:text="Details text..."
+        android:padding="16dp"
+        android:textColor="@color/colorPrimary"
+        android:textIsSelectable="true"
+        tools:context=".ItemDetailFragment"/>
+
+</LinearLayout>

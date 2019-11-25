@@ -13,13 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.alejandro.aplicaciondelista.dummy.ItemContent;
+import com.alejandro.aplicaciondelista.model.ItemContent;
 
 public class ItemDetailFragment extends Fragment {
 
     static final String ARG_ITEM_ID = "item_id";
 
-    private ItemContent.DummyItem currentItem;
+    private ItemContent.ProductItem currentItem;
 
     public ItemDetailFragment() {
     }

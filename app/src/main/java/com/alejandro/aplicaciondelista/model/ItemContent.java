@@ -1,9 +1,6 @@
-package com.alejandro.aplicaciondelista.dummy;
+package com.alejandro.aplicaciondelista.model;
 
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-
-import com.alejandro.aplicaciondelista.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,12 +12,12 @@ public class ItemContent {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<DummyItem> ITEMS = new ArrayList<>();
+    public static final List<ProductItem> ITEMS = new ArrayList<>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    public static final Map<String, ProductItem> ITEM_MAP = new HashMap<String, ProductItem>();
 
     private static final int COUNT = 25;
 
@@ -31,13 +28,13 @@ public class ItemContent {
         }
     }
 
-    private static void addItem(DummyItem item) {
+    private static void addItem(ProductItem item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
 
-    private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position),
+    private static ProductItem createDummyItem(int position) {
+        return new ProductItem(String.valueOf(position),
                              null,
                                "Item " + position,
                             "Subtitle text",
@@ -47,17 +44,15 @@ public class ItemContent {
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
-        }
+        builder.append("Delicius Cheese Burguer");
+
         return builder.toString();
     }
 
     /**
      * A dummy item representing a piece of content.
      */
-    public static class DummyItem {
+    public static class ProductItem {
 
         public final String id;
         public final Drawable image;
@@ -66,7 +61,7 @@ public class ItemContent {
         public final String category;
         public final String details;
 
-        public DummyItem(String id, Drawable image, String title, String subTitle, String category, String details) {
+        ProductItem(String id, Drawable image, String title, String subTitle, String category, String details) {
             this.id = id;
             this.image = image;
             this.title = title;
