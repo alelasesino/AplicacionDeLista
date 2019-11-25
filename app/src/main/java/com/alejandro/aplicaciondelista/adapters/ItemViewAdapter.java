@@ -20,10 +20,10 @@ import java.util.List;
 
 public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
 
-    private final List<ItemContent.ProductItem> itemList;
+    private final List<ItemContent.ItemProduct> itemList;
     private onItemCardAction cardAction;
 
-    public ItemViewAdapter(List<ItemContent.ProductItem> items, onItemCardAction cardAction) {
+    public ItemViewAdapter(List<ItemContent.ItemProduct> items, onItemCardAction cardAction) {
 
         this.cardAction = cardAction;
         itemList = items;
@@ -94,7 +94,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
         }
 
-        void bind(ItemContent.ProductItem item){
+        void bind(ItemContent.ItemProduct item){
 
             //imageCard.setImageDrawable(item.image);
             titleCard.setText(item.title);

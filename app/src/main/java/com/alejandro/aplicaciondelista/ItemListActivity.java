@@ -47,7 +47,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    void onCardItemClick(View card, ItemContent.ProductItem item){
+    void onCardItemClick(View card, ItemContent.ItemProduct item){
 
         if (largeScreen)
             launchItemDetailFragment(item);
@@ -56,7 +56,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    private void launchItemDetailFragment(ItemContent.ProductItem item){
+    private void launchItemDetailFragment(ItemContent.ItemProduct item){
 
         Bundle arguments = new Bundle();
         arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.id);
@@ -72,7 +72,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    private void launchItemDetailActivity(View card, ItemContent.ProductItem item){
+    private void launchItemDetailActivity(View card, ItemContent.ItemProduct item){
 
         Intent intent = new Intent(this, ItemDetailActivity.class);
         intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id);

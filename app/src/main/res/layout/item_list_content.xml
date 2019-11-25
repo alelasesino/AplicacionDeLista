@@ -62,15 +62,10 @@
                 android:textSize="15sp"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/PriceTextView"
                 android:text="2,50 €"
                 android:layout_gravity="end"
-                android:layout_margin="5dp"
-                android:textFontWeight="500"
-                android:fontFamily="sans-serif-black"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/price_label_background"/>
+                android:layout_margin="5dp"/>
 
         </LinearLayout>
 

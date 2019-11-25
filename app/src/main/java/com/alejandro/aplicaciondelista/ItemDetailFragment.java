@@ -1,11 +1,13 @@
 package com.alejandro.aplicaciondelista;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -19,7 +21,7 @@ public class ItemDetailFragment extends Fragment {
 
     static final String ARG_ITEM_ID = "item_id";
 
-    private ItemContent.ProductItem currentItem;
+    private ItemContent.ItemProduct currentItem;
 
     public ItemDetailFragment() {
     }
@@ -42,8 +44,14 @@ public class ItemDetailFragment extends Fragment {
             appBarLayout = activity.findViewById(R.id.toolbar_layout);
 
         if (appBarLayout != null){
+
             appBarLayout.setTitle(currentItem.title);
             appBarLayout.setExpandedTitleColor(ContextCompat.getColor(activity, R.color.foregroundOnPrimary));
+
+            Typeface typeface = ResourcesCompat.getFont(activity, R.font.insanibu);
+            appBarLayout.setCollapsedTitleTypeface(typeface);
+            appBarLayout.setExpandedTitleTypeface(typeface);
+
         }
 
     }
@@ -63,8 +71,8 @@ public class ItemDetailFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
 
-        if (currentItem != null)
-            ((TextView) rootView.findViewById(R.id.item_detail)).setText(currentItem.details);
+        /*if (currentItem != null)
+            ((TextView) rootView.findViewById(R.id.item_detail)).setText(currentItem.details);*/
 
         return rootView;
     }

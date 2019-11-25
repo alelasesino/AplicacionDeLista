@@ -12,12 +12,12 @@ public class ItemContent {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<ProductItem> ITEMS = new ArrayList<>();
+    public static final List<ItemProduct> ITEMS = new ArrayList<>();
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, ProductItem> ITEM_MAP = new HashMap<String, ProductItem>();
+    public static final Map<String, ItemProduct> ITEM_MAP = new HashMap<>();
 
     private static final int COUNT = 25;
 
@@ -28,13 +28,13 @@ public class ItemContent {
         }
     }
 
-    private static void addItem(ProductItem item) {
+    private static void addItem(ItemProduct item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
 
-    private static ProductItem createDummyItem(int position) {
-        return new ProductItem(String.valueOf(position),
+    private static ItemProduct createDummyItem(int position) {
+        return new ItemProduct(String.valueOf(position),
                              null,
                                "Item " + position,
                             "Subtitle text",
@@ -52,7 +52,7 @@ public class ItemContent {
     /**
      * A dummy item representing a piece of content.
      */
-    public static class ProductItem {
+    public static class ItemProduct {
 
         public final String id;
         public final Drawable image;
@@ -61,7 +61,7 @@ public class ItemContent {
         public final String category;
         public final String details;
 
-        ProductItem(String id, Drawable image, String title, String subTitle, String category, String details) {
+        ItemProduct(String id, Drawable image, String title, String subTitle, String category, String details) {
             this.id = id;
             this.image = image;
             this.title = title;

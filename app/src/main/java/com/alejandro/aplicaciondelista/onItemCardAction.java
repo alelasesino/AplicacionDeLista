@@ -6,7 +6,7 @@ import com.alejandro.aplicaciondelista.model.ItemContent;
 
 public interface onItemCardAction {
 
-    void onCardItemClick(View card, ItemContent.ProductItem item);
+    void onCardItemClick(View card, ItemContent.ItemProduct item);
     //void onCardItemLongClick(View v);
 
 }
