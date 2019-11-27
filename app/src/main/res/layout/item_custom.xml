@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceLarge"
+        android:text="Detalles del producto"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="10dp"
+        android:textSize="26sp"
+        android:textColor="#BA000000"
+        android:textIsSelectable="true"
+        tools:context=".ui.fragment.ItemDetailFragment"/>
+
+    <EditText
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceLarge"
+        android:hint="Descripcion del producto"
+        android:paddingStart="16dp"
+        android:paddingEnd="0dp"
+        android:textColor="#6D000000"
+        tools:context=".ui.fragment.ItemDetailFragment"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceLarge"
+        android:text="Tags"
+        android:padding="16dp"
+        android:textSize="26sp"
+        android:textColor="#BA000000"
+        android:textIsSelectable="true"
+        tools:context=".ui.fragment.ItemDetailFragment"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Añadir tag"
+            android:paddingStart="16dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>

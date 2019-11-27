@@ -3,33 +3,34 @@ package com.alejandro.aplicaciondelista.ui.activity;
 import android.os.Bundle;
 
 import com.alejandro.aplicaciondelista.R;
-import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
+import com.alejandro.aplicaciondelista.ui.fragment.ItemCustomFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.ActionBar;
-
 import android.view.MenuItem;
+import android.view.View;
 
-public class ItemDetailActivity extends AppCompatActivity {
+public class ItemCustomActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_detail);
+        setContentView(R.layout.activity_item_custom);
 
-        Toolbar toolbar = findViewById(R.id.detail_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab_save_item);
-        fab.setOnClickListener((view)->{
-
-            Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_save_item);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
         });
 
         setHomeButtonActionBar();
@@ -37,16 +38,17 @@ public class ItemDetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(ItemDetailFragment.ARG_ITEM_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+            //Bundle arguments = new Bundle();
+            //arguments.putString(ItemDetailFragment.ARG_ITEM_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
 
-            ItemDetailFragment fragment = new ItemDetailFragment();
-            fragment.setArguments(arguments);
+            ItemCustomFragment fragment = new ItemCustomFragment();
+            //fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.item_detail_container, fragment)
+                    .add(R.id.item_custom_container, fragment)
                     .commit();
         }
+
     }
 
     private void setHomeButtonActionBar(){
@@ -56,6 +58,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         if (actionBar != null){
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black);
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
         }
 
 
@@ -73,4 +76,5 @@ public class ItemDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
+
 }
