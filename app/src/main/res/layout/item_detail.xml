@@ -16,7 +16,7 @@
         android:textSize="26sp"
         android:textColor="#BA000000"
         android:textIsSelectable="true"
-        tools:context=".ItemDetailFragment"/>
+        tools:context=".ui.fragment.ItemDetailFragment"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
         android:paddingEnd="0dp"
         android:textColor="#6D000000"
         android:textIsSelectable="true"
-        tools:context=".ItemDetailFragment"/>
+        tools:context=".ui.fragment.ItemDetailFragment"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -38,6 +38,6 @@
         android:textSize="26sp"
         android:textColor="#BA000000"
         android:textIsSelectable="true"
-        tools:context=".ItemDetailFragment"/>
+        tools:context=".ui.fragment.ItemDetailFragment"/>
 
 </LinearLayout>

@@ -3,29 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_home"
-            android:title="REFRESCOS" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:title="HAMBUERGUESAS" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:title="VEGETARIANO" />
-        <item
-            android:id="@+id/nav_tools"
-            android:title="HELADOS" />
-    </group>
-
-    <item android:title="Communicate">
+    <item android:title="Categorias">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:title="SABER MAS" />
+                android:id="@+id/nav_burgers"
+                android:title="Hamburguesas" />
             <item
-                android:id="@+id/nav_send"
-                android:title="VISITANOS" />
+                android:id="@+id/nav_bebidas"
+                android:title="Bebidas" />
+            <item
+                android:id="@+id/nav_postres"
+                android:title="Postres" />
+            <item
+                android:id="@+id/nav_salsas"
+                android:title="Salsas" />
+        </menu>
+    </item>
+
+    <item android:title="Acerca de">
+        <menu>
+            <item
+                android:id="@+id/nav_visit"
+                android:title="Visitanos" />
         </menu>
     </item>
 

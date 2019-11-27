@@ -1,16 +1,13 @@
-package com.alejandro.aplicaciondelista;
+package com.alejandro.aplicaciondelista.ui.activity;
 
-import android.app.ActivityOptions;
-import android.content.Intent;
 import android.os.Bundle;
 
+import com.alejandro.aplicaciondelista.R;
+import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.widget.Toolbar;
-
-import android.util.Pair;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;

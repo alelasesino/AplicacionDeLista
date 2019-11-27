@@ -9,7 +9,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context=".ItemListActivity">
+    tools:context=".ui.activity.ItemListActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"
-            tools:context="com.alejandro.aplicaciondelista.ItemListActivity"
+            tools:context="com.alejandro.aplicaciondelista.ui.activity.ItemListActivity"
             tools:listitem="@layout/item_list_content"/>
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu

@@ -1,4 +1,4 @@
-package com.alejandro.aplicaciondelista;
+package com.alejandro.aplicaciondelista.ui.components;
 
 import android.graphics.Rect;
 import android.view.View;
@@ -10,7 +10,7 @@ public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
     private int spanCount;
     private int spacing;
 
-    GridSpacingItemDecoration(int spanCount, boolean largeScreen) {
+    public GridSpacingItemDecoration(int spanCount, boolean largeScreen) {
         this.spanCount = spanCount;
         this.spacing = largeScreen ? 10 : 30;
     }

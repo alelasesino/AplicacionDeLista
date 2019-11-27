@@ -1,4 +1,4 @@
-package com.alejandro.aplicaciondelista;
+package com.alejandro.aplicaciondelista.ui.activity;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -14,8 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
+import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemContent;
+import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
 
 /**
  * Activity principal de la aplicacion

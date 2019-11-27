@@ -1,9 +1,10 @@
-package com.alejandro.aplicaciondelista;
+package com.alejandro.aplicaciondelista.ui.fragment;
 
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import com.alejandro.aplicaciondelista.R;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import androidx.core.content.ContextCompat;
@@ -19,7 +20,7 @@ import com.alejandro.aplicaciondelista.model.ItemContent;
 
 public class ItemDetailFragment extends Fragment {
 
-    static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_ITEM_ID = "item_id";
 
     private ItemContent.ItemProduct currentItem;
 
