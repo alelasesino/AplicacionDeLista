@@ -1,6 +1,7 @@
 package com.alejandro.aplicaciondelista.model;
 
-import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,12 +15,7 @@ public class ItemContent {
      */
     public static final List<ItemProduct> ITEMS = new ArrayList<>();
 
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static final Map<String, ItemProduct> ITEM_MAP = new HashMap<>();
-
-    private static final int COUNT = 25;
+    private static final int COUNT = 10;
 
     static {
         // Add some sample items.
@@ -30,46 +26,22 @@ public class ItemContent {
 
     private static void addItem(ItemProduct item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
     }
 
     private static ItemProduct createDummyItem(int position) {
         return new ItemProduct(String.valueOf(position),
-                             null,
-                               "Item " + position,
-                            "Subtitle text",
-                            "Category",
-                                    makeDetails(position));
+                "",
+                "Item" + position,
+                makeDetails(position),
+                2.50+position,
+                new String[]{"bebida", "gluten"});
     }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Delicius Cheese Burguer");
+        builder.append("Lorem Ipsum es el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas Letraset, las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.");
 
         return builder.toString();
-    }
-
-    /**
-     * A dummy item representing a piece of content.
-     */
-    public static class ItemProduct {
-
-        public final String id;
-        public final Drawable image;
-        public final String title;
-        public final String subTitle;
-        public final String category;
-        public final String details;
-
-        ItemProduct(String id, Drawable image, String title, String subTitle, String category, String details) {
-            this.id = id;
-            this.image = image;
-            this.title = title;
-            this.subTitle = subTitle;
-            this.category = category;
-            this.details = details;
-        }
-
     }
 
 }

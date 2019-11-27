@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="255dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:elevation="0dp"
     android:foreground="?android:attr/selectableItemBackground"
@@ -9,6 +9,16 @@
     android:background="#FFFFFF"
     style="@style/CardViewTheme"
     app:cardCornerRadius="3dp">
+
+    <Button
+        android:id="@+id/remove_card"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        style="?android:attr/borderlessButtonStyle"
+        android:background="@drawable/ic_close_black"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,23 +34,22 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/card_image"
+                android:id="@+id/image_card"
                 android:layout_width="wrap_content"
                 android:layout_height="120dp"
                 android:src="@drawable/burger"
                 android:scaleType="fitCenter"
-                android:transitionName="card_image_transition"
-                />
+                android:transitionName="card_image_transition" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/title_card"
+                android:id="@+id/name_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Cheese Burguer"
@@ -50,10 +59,11 @@
                 android:textAlignment="center"/>
 
             <TextView
-                android:id="@+id/subtitle_card"
+                android:id="@+id/details_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Delicius cheese with bacon, the best burguer you can eat"
+                android:gravity="center"
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:textColor="#8D000000"
@@ -61,11 +71,20 @@
                 android:paddingVertical="3dp"
                 android:textSize="15sp"/>
 
-            <TextView
-                style="@style/PriceTextView"
-                android:text="2,50 €"
-                android:layout_gravity="end"
-                android:layout_margin="5dp"/>
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/price_card"
+                    style="@style/PriceTextView"
+                    android:text="2,50 €"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="5dp"/>
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         </LinearLayout>
 

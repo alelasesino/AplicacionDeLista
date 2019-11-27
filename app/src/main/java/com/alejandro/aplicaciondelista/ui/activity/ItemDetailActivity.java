@@ -1,5 +1,6 @@
 package com.alejandro.aplicaciondelista.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.alejandro.aplicaciondelista.R;
@@ -24,21 +25,27 @@ public class ItemDetailActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab_save_item);
+        FloatingActionButton fab = findViewById(R.id.fab_web_details);
         fab.setOnClickListener((view)->{
 
-            Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Redireccionar a la web burger king", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
 
         });
 
         setHomeButtonActionBar();
+        argumentsReceived(savedInstanceState);
+
+    }
+
+    private void argumentsReceived(Bundle savedInstanceState) {
 
         if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
+
+            Intent intent = getIntent();
+
             Bundle arguments = new Bundle();
-            arguments.putString(ItemDetailFragment.ARG_ITEM_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+            arguments.putParcelable(ItemDetailFragment.ARG_ITEM, intent.getParcelableExtra(ItemDetailFragment.ARG_ITEM));
 
             ItemDetailFragment fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);
@@ -47,6 +54,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         }
+
     }
 
     private void setHomeButtonActionBar(){

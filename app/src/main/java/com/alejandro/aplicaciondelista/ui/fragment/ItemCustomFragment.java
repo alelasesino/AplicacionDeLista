@@ -14,13 +14,14 @@ import androidx.fragment.app.Fragment;
 
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.model.ItemContent;
+import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 public class ItemCustomFragment extends Fragment {
 
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_ITEM = "item_custom";
 
-    private ItemContent.ItemProduct currentItem;
+    private ItemProduct currentItem;
 
     public ItemCustomFragment() {
     }
@@ -29,7 +30,7 @@ public class ItemCustomFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //setCurrentItem();
+        setCurrentItem();
         initializeToolbar();
 
     }
@@ -60,8 +61,8 @@ public class ItemCustomFragment extends Fragment {
         Bundle arguments = getArguments();
 
         if(arguments != null)
-            if (arguments.containsKey(ARG_ITEM_ID))
-                currentItem = ItemContent.ITEM_MAP.get(arguments.getString(ARG_ITEM_ID));
+            if (arguments.containsKey(ARG_ITEM))
+                currentItem = arguments.getParcelable(ARG_ITEM);
 
     }
 

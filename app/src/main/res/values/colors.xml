@@ -9,7 +9,7 @@
     <color name="colorBackground">#1B000000</color> <!--292929-->
     <color name="colorError">#CF6679</color>
 
-    <color name="foregroundOnPrimary">#000000</color>
+    <color name="foregroundOnPrimary">#D8000000</color>
     <color name="foregroundOnBackground">#FFFFFF</color>
     <color name="foregroundOnBackground70">#B3FFFFFF</color>
 

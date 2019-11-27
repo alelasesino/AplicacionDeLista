@@ -24,7 +24,7 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/card_image"
+                android:id="@+id/image_card"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/download"
@@ -42,7 +42,7 @@
             android:paddingStart="15dp">
 
             <TextView
-                android:id="@+id/title_card"
+                android:id="@+id/name_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Title Card"
@@ -50,7 +50,7 @@
                 android:textSize="32sp"/>
 
             <TextView
-                android:id="@+id/subtitle_card"
+                android:id="@+id/details_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Small plates and sandwiches an intimate setting with 12..."

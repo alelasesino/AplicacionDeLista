@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
@@ -74,14 +75,18 @@ public class ItemListActivity extends AppCompatActivity {
     private void launchCustomActivity(){
 
         Intent intent = new Intent(this, ItemCustomActivity.class);
-        //intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id);
+        intent.putExtra(ItemCustomFragment.ARG_ITEM, new ItemProduct());
         startActivity(intent);
 
     }
 
     private void launchCustomFragment(){
 
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(ItemCustomFragment.ARG_ITEM, new ItemProduct());
+
         ItemCustomFragment fragment = new ItemCustomFragment();
+        fragment.setArguments(arguments);
         fragment.setEnterTransition(new Fade());
         fragment.setExitTransition(new Fade());
 
@@ -91,7 +96,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    void onCardItemClick(View card, ItemContent.ItemProduct item){
+    void onCardItemClick(View card, ItemProduct item){
 
         if (largeScreen)
             launchItemDetailFragment(item);
@@ -100,10 +105,10 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    private void launchItemDetailFragment(ItemContent.ItemProduct item){
+    private void launchItemDetailFragment(ItemProduct item){
 
         Bundle arguments = new Bundle();
-        arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.id);
+        arguments.putParcelable(ItemDetailFragment.ARG_ITEM, item);
 
         ItemDetailFragment fragment = new ItemDetailFragment();
         fragment.setArguments(arguments);
@@ -116,12 +121,12 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    private void launchItemDetailActivity(View card, ItemContent.ItemProduct item){
+    private void launchItemDetailActivity(View card, ItemProduct item){
 
         Intent intent = new Intent(this, ItemDetailActivity.class);
-        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id);
+        intent.putExtra(ItemDetailFragment.ARG_ITEM, item);
 
-        ImageView img = card.findViewById(R.id.card_image);
+        ImageView img = card.findViewById(R.id.image_card);
 
         Pair[] pairs = new Pair[1];
         pairs[0] = new Pair<View, String>(img, "card_image_transition");
@@ -134,7 +139,6 @@ public class ItemListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
