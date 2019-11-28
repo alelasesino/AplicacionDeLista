@@ -35,7 +35,7 @@
                 android:layout_marginBottom="65dp"/>-->
 
             <EditText
-                android:id="@+id/txt_name_product"
+                android:id="@+id/txt_name"
                 app:layout_collapseMode="parallax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -16,7 +16,7 @@
         android:background="@drawable/background_product">
 
         <EditText
-            android:id="@+id/txt_name_product"
+            android:id="@+id/txt_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="text"

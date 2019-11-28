@@ -1,6 +1,8 @@
 package com.alejandro.aplicaciondelista.ui.fragment;
 
 import android.app.Activity;
+import android.content.res.Configuration;
+import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
@@ -63,19 +67,20 @@ public class ItemCustomFragment extends Fragment {
 
     private void bindDataProducts(View fragmentView){
 
-        EditText txtPrice = fragmentView.findViewById(R.id.txt_price);
+        EditText txtName = fragmentView.findViewById(R.id.txt_name);
         EditText txtDetails = fragmentView.findViewById(R.id.txt_details);
+        EditText txtPrice = fragmentView.findViewById(R.id.txt_price);
         //TextView tvTags = fragmentView.findViewById(R.id.tv_tags);
+
+        if(txtName == null)
+            txtName = activity.findViewById(R.id.txt_name);
 
         if(txtPrice == null)
             txtPrice = activity.findViewById(R.id.txt_price);
-        else
-            ((EditText)fragmentView.findViewById(R.id.txt_name_product)).setText(currentItem.getName());
 
-        if(txtPrice != null)
-            txtPrice.setText(Utils.toPrice(currentItem.getPrice()));
-
-        txtDetails.setText(currentItem.getDetails());
+        Utils.setText(txtName, currentItem.getName());
+        Utils.setText(txtDetails, currentItem.getDetails());
+        Utils.setText(txtPrice, Utils.toPrice(currentItem.getPrice()));
         //tvTags.setText(String.join(", ",currentItem.getTags()));
 
     }

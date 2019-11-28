@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
@@ -76,6 +77,31 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
+    private void animateItemDelete(View view, int position){
+
+        AnimationSet animation = new AnimationSet(true);
+        animation.addAnimation(new AlphaAnimation(1.0F, 0.0F));
+        animation.addAnimation(new ScaleAnimation(1, 0.8f, 1, 0.8f)); // Change args as desired
+        animation.setDuration(400);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setVisibility(View.INVISIBLE);
+                itemList.remove(position);
+                notifyItemRemoved(position);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+        });
+
+        view.startAnimation(animation);
+
+    }
+
     public void setEditMode(boolean editMode){
         this.editMode = editMode;
         notifyDataSetChanged();
@@ -85,9 +111,8 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         return editMode;
     }
 
-    private void removeItem(int position){
-        itemList.remove(position);
-        notifyItemRemoved(position);
+    private void removeItem(View view, int position){
+        animateItemDelete(view, position);
     }
 
     private void addItem(ItemProduct item){
@@ -126,7 +151,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
                 int position = getAdapterPosition();
 
                 if(position != RecyclerView.NO_POSITION)
-                    removeItem(position);
+                    removeItem(view, position);
 
             });
 

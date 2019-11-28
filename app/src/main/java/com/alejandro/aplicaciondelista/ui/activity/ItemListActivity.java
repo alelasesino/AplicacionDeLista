@@ -11,6 +11,11 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
@@ -23,6 +28,7 @@ import com.alejandro.aplicaciondelista.ui.fragment.ItemCustomFragment;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.android.material.navigation.NavigationView;
 
 /**
  * Activity principal de la aplicacion
@@ -76,16 +82,12 @@ public class ItemListActivity extends AppCompatActivity {
         FloatingActionButton addItemButton = findViewById(R.id.fab_add_item);
         addItemButton.setOnClickListener(view -> {
 
-            ItemProduct testProduct = new ItemProduct();
-            testProduct.setName("TEST BURGER");
-            testProduct.setDetails("TESTING DETAILS ITEM");
-            testProduct.setPrice(8.55);
-            testProduct.setTags(new String[]{"tag1", "tag2", "tag3"});
+            ItemProduct itemProduct = new ItemProduct();
 
             if(largeScreen)
-                launchCustomFragment(testProduct);
+                launchCustomFragment(itemProduct);
             else
-                launchCustomActivity(testProduct);
+                launchCustomActivity(itemProduct);
 
         });
 
@@ -130,9 +132,15 @@ public class ItemListActivity extends AppCompatActivity {
     void onCardItemClick(View card, ItemProduct item, boolean editMode){
 
         if (largeScreen)
-            launchItemDetailFragment(item);
+            if(editMode)
+                launchCustomFragment(item);
+            else
+                launchItemDetailFragment(item);
         else
-            launchItemDetailActivity(card, item);
+            if(editMode)
+                launchCustomActivity(item);
+            else
+                launchItemDetailActivity(card, item);
 
     }
 

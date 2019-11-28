@@ -71,11 +71,9 @@ public class ItemDetailFragment extends Fragment {
         else
             ((TextView)fragmentView.findViewById(R.id.tv_name)).setText(currentItem.getName());
 
-        if(tvPrice != null)
-            tvPrice.setText(Utils.toPrice(currentItem.getPrice()));
-
-        tvDetails.setText(currentItem.getDetails());
-        tvTags.setText(String.join(", ",currentItem.getTags()));
+        Utils.setText(tvDetails, currentItem.getDetails());
+        Utils.setText(tvPrice, Utils.toPrice(currentItem.getPrice()));
+        Utils.setText(tvTags, String.join(", ",currentItem.getTags()));
 
     }
 

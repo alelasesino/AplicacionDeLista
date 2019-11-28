@@ -11,6 +11,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.activity.ItemCustomActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_custom_product"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
@@ -25,6 +26,7 @@
         </activity>
         <activity
             android:name=".ui.activity.ItemDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_item_detail"
             android:parentActivityName=".ui.activity.ItemListActivity"
             android:theme="@style/AppTheme.NoActionBar">
