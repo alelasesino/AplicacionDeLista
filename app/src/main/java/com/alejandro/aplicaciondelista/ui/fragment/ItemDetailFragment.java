@@ -39,7 +39,6 @@ public class ItemDetailFragment extends Fragment {
         this.activity = getActivity();
 
         argumentsReceived();
-
         initializeToolbar();
 
     }

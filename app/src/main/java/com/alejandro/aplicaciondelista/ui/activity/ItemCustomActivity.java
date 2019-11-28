@@ -32,15 +32,19 @@ public class ItemCustomActivity extends AppCompatActivity {
         });
 
         setHomeButtonActionBar();
+        argumentsReceived(savedInstanceState);
+
+    }
+
+    private void argumentsReceived(Bundle savedInstanceState){
 
         if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
-            //Bundle arguments = new Bundle();
-            //arguments.putString(ItemDetailFragment.ARG_ITEM_ID, getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(ItemCustomFragment.ARG_ITEM, getIntent().getParcelableExtra(ItemCustomFragment.ARG_ITEM));
 
             ItemCustomFragment fragment = new ItemCustomFragment();
-            //fragment.setArguments(arguments);
+            fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_custom_container, fragment)

@@ -7,7 +7,7 @@ import com.alejandro.aplicaciondelista.model.ItemProduct;
 
 public interface onItemCardAction {
 
-    void onCardItemClick(View card, ItemProduct item);
+    void onCardItemClick(View card, ItemProduct item, boolean editMode);
     //void onCardItemLongClick(View v);
 
 }

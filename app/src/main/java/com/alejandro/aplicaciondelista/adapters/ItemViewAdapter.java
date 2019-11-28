@@ -19,13 +19,13 @@ import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.onItemCardAction;
 import com.alejandro.aplicaciondelista.R;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
 
     private final List<ItemProduct> itemList;
     private onItemCardAction cardAction;
+    private boolean editMode;
 
     public ItemViewAdapter(List<ItemProduct> items, onItemCardAction cardAction) {
 
@@ -61,7 +61,8 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
     public void onViewAttachedToWindow(@NonNull ItemViewHolder holder) {
         super.onViewAttachedToWindow(holder);
 
-        animateItemReveal(holder.itemView);
+        if(!editMode)
+            animateItemReveal(holder.itemView);
 
     }
 
@@ -75,9 +76,23 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
+    public void setEditMode(boolean editMode){
+        this.editMode = editMode;
+        notifyDataSetChanged();
+    }
+
+    public boolean getEditMode(){
+        return editMode;
+    }
+
     private void removeItem(int position){
         itemList.remove(position);
         notifyItemRemoved(position);
+    }
+
+    private void addItem(ItemProduct item){
+        itemList.add(item);
+        notifyItemInserted(itemList.size()-1);
     }
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -102,7 +117,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
                 int position = getAdapterPosition();
 
                 if(position != RecyclerView.NO_POSITION)
-                    cardAction.onCardItemClick(v, itemList.get(position));
+                    cardAction.onCardItemClick(v, itemList.get(position), editMode);
 
             });
 
@@ -118,7 +133,8 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         }
 
         void bind(ItemProduct item){
-
+            
+            removeCard.setVisibility(editMode ? View.VISIBLE : View.INVISIBLE);
             //imageCard.setImageDrawable(item.image);
             nameCard.setText(item.getName());
             detailsCard.setText(item.getDetails());

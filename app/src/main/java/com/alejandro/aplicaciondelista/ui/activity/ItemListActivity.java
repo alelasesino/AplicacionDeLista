@@ -4,7 +4,6 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.Fade;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.View;
@@ -23,6 +22,7 @@ import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemCustomFragment;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 /**
  * Activity principal de la aplicacion
@@ -30,6 +30,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 public class ItemListActivity extends AppCompatActivity {
 
     private boolean largeScreen;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
 
         recyclerView.setAdapter(new ItemViewAdapter(ItemContent.ITEMS, this::onCardItemClick));
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, largeScreen));
@@ -58,32 +60,61 @@ public class ItemListActivity extends AppCompatActivity {
 
     private void setupFloatingButtons(){
 
+        FloatingActionsMenu mainButton = findViewById(R.id.fab_main);
+        mainButton.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+            @Override
+            public void onMenuExpanded() {}
+
+            @Override
+            public void onMenuCollapsed() {
+
+                setEditModeRecyclerView(false);
+
+            }
+        });
+
         FloatingActionButton addItemButton = findViewById(R.id.fab_add_item);
         addItemButton.setOnClickListener(view -> {
 
+            ItemProduct testProduct = new ItemProduct();
+            testProduct.setName("TEST BURGER");
+            testProduct.setDetails("TESTING DETAILS ITEM");
+            testProduct.setPrice(8.55);
+            testProduct.setTags(new String[]{"tag1", "tag2", "tag3"});
+
             if(largeScreen)
-                launchCustomFragment();
+                launchCustomFragment(testProduct);
             else
-                launchCustomActivity();
+                launchCustomActivity(testProduct);
 
         });
 
         FloatingActionButton removeItemButton = findViewById(R.id.fab_remove_item);
+        removeItemButton.setOnClickListener(view -> setEditModeRecyclerView(true));
 
     }
 
-    private void launchCustomActivity(){
+    private void setEditModeRecyclerView(boolean editMode){
+
+        ItemViewAdapter adapter = (ItemViewAdapter) recyclerView.getAdapter();
+
+        if(adapter != null && editMode != adapter.getEditMode())
+            adapter.setEditMode(editMode);
+
+    }
+
+    private void launchCustomActivity(ItemProduct item){
 
         Intent intent = new Intent(this, ItemCustomActivity.class);
-        intent.putExtra(ItemCustomFragment.ARG_ITEM, new ItemProduct());
+        intent.putExtra(ItemCustomFragment.ARG_ITEM, item);
         startActivity(intent);
 
     }
 
-    private void launchCustomFragment(){
+    private void launchCustomFragment(ItemProduct item){
 
         Bundle arguments = new Bundle();
-        arguments.putParcelable(ItemCustomFragment.ARG_ITEM, new ItemProduct());
+        arguments.putParcelable(ItemCustomFragment.ARG_ITEM, item);
 
         ItemCustomFragment fragment = new ItemCustomFragment();
         fragment.setArguments(arguments);
@@ -96,7 +127,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     }
 
-    void onCardItemClick(View card, ItemProduct item){
+    void onCardItemClick(View card, ItemProduct item, boolean editMode){
 
         if (largeScreen)
             launchItemDetailFragment(item);
