@@ -120,6 +120,16 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         notifyItemInserted(itemList.size()-1);
     }
 
+    private void updateItem(ItemProduct item, int position){
+        ItemProduct i = itemList.get(position);
+        i.setName(item.getName());
+        i.setTags(item.getTags());
+        i.setPrice(item.getPrice());
+        i.setDetails(item.getDetails());
+        i.setImageUrl(item.getImageUrl());
+        notifyItemChanged(position);
+    }
+
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final Button removeCard;
