@@ -43,16 +43,6 @@
         android:textIsSelectable="true"
         tools:context=".ui.fragment.ItemDetailFragment"/>
 
-    <TextView
-        android:id="@+id/tv_tags"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/textAppearanceLarge"
-        android:text="Gluten, Bebida"
-        android:paddingStart="16dp"
-        android:paddingEnd="0dp"
-        android:textColor="#6D000000"
-        android:textIsSelectable="true"
-        tools:context=".ui.fragment.ItemDetailFragment"/>
+    <include layout="@layout/recycler_tag"/>
 
 </LinearLayout>

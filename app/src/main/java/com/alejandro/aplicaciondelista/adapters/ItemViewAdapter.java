@@ -1,6 +1,6 @@
 package com.alejandro.aplicaciondelista.adapters;
 
-import android.util.Log;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,19 +17,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
-import com.alejandro.aplicaciondelista.onItemCardAction;
+import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.R;
+import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 
 import java.util.List;
 
 public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
 
     private final List<ItemProduct> itemList;
-    private onItemCardAction cardAction;
+    private ItemCardActionListener cardAction;
     private boolean editMode;
+    private Context context;
 
-    public ItemViewAdapter(List<ItemProduct> items, onItemCardAction cardAction) {
-
+    public ItemViewAdapter(Context context, List<ItemProduct> items, ItemCardActionListener cardAction) {
+        this.context = context;
         this.cardAction = cardAction;
         itemList = items;
 
@@ -75,6 +77,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         animation.setDuration(400);
         view.startAnimation(animation);
 
+
     }
 
     private void animateItemDelete(View view, int position){
@@ -85,17 +88,18 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         animation.setDuration(400);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                view.setVisibility(View.INVISIBLE);
                 itemList.remove(position);
                 notifyItemRemoved(position);
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) { }
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
 
         view.startAnimation(animation);
@@ -115,19 +119,42 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         animateItemDelete(view, position);
     }
 
-    private void addItem(ItemProduct item){
+    public void addItem(ItemProduct item){
         itemList.add(item);
-        notifyItemInserted(itemList.size()-1);
+        ((ItemListActivity)context).doSmoothScroll(getItemCount());
+        notifyItemInserted(getItemCount());
+
     }
 
-    private void updateItem(ItemProduct item, int position){
-        ItemProduct i = itemList.get(position);
-        i.setName(item.getName());
-        i.setTags(item.getTags());
-        i.setPrice(item.getPrice());
-        i.setDetails(item.getDetails());
-        i.setImageUrl(item.getImageUrl());
-        notifyItemChanged(position);
+    public void updateItem(ItemProduct item){
+
+        int position = getItemById(item.getId());
+
+        if(position != -1){
+
+            ItemProduct itemProduct = itemList.get(position);
+            itemProduct.setName(item.getName());
+            itemProduct.setTags(item.getTags());
+            itemProduct.setPrice(item.getPrice());
+            itemProduct.setDetails(item.getDetails());
+            itemProduct.setImageUrl(item.getImageUrl());
+            notifyItemChanged(position);
+
+        }
+
+    }
+
+    private int getItemById(String id){
+
+        int i = 0;
+        for(ItemProduct product: itemList) {
+            if(product.getId().equals(id))
+                return i;
+            i++;
+        }
+
+        return -1;
+
     }
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -152,7 +179,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
                 int position = getAdapterPosition();
 
                 if(position != RecyclerView.NO_POSITION)
-                    cardAction.onCardItemClick(v, itemList.get(position), editMode);
+                    cardAction.onCardItemClick(view, itemList.get(position), editMode);
 
             });
 
@@ -160,8 +187,10 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
                 int position = getAdapterPosition();
 
-                if(position != RecyclerView.NO_POSITION)
+                if(position != RecyclerView.NO_POSITION) {
+                    cardAction.onCardItemRemoved(view, itemList.get(position));
                     removeItem(view, position);
+                }
 
             });
 

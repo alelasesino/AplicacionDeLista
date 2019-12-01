@@ -43,7 +43,7 @@ public class ItemCustomActivity extends AppCompatActivity {
             Bundle arguments = new Bundle();
             arguments.putParcelable(ItemCustomFragment.ARG_ITEM, getIntent().getParcelableExtra(ItemCustomFragment.ARG_ITEM));
 
-            ItemCustomFragment fragment = new ItemCustomFragment();
+            ItemCustomFragment fragment = new ItemCustomFragment(null);
             fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()

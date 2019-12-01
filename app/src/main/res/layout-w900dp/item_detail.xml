@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="30dp"
         android:orientation="vertical">
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -43,21 +44,33 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="@dimen/fab_margin">
 
+                <Button
+                    android:id="@+id/bt_favorite"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@drawable/ic_favorite_border"/>
+
                 <TextView
                     android:id="@+id/tv_price"
                     style="@style/PriceTextView"
                     android:hint="Precio"
                     android:textColor="#FFFFFF"
                     android:gravity="center"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="15dp"
                     app:layout_anchor="@id/fab_save_item"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="@dimen/fab_margin"/>
+                    android:layout_gravity="center_vertical"/>
+
+
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/fab_web_details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_save_white" />
+                    android:layout_marginEnd="15dp"
+                    app:srcCompat="@android:drawable/ic_dialog_info" />
 
             </LinearLayout>
 
@@ -93,23 +106,15 @@
             android:layout_height="wrap_content"
             style="?android:attr/textAppearanceLarge"
             android:text="Tags"
-            android:padding="16dp"
+            android:paddingTop="16dp"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="3dp"
             android:textSize="26sp"
             android:textColor="#BA000000"
             android:textIsSelectable="true"
             tools:context=".ui.fragment.ItemDetailFragment"/>
 
-        <TextView
-            android:id="@+id/tv_tags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="?android:attr/textAppearanceLarge"
-            android:text="Gluten, Bebida"
-            android:paddingStart="16dp"
-            android:paddingEnd="0dp"
-            android:textColor="#6D000000"
-            android:textIsSelectable="true"
-            tools:context=".ui.fragment.ItemDetailFragment"/>
+        <include layout="@layout/recycler_tag"/>
 
     </LinearLayout>
 

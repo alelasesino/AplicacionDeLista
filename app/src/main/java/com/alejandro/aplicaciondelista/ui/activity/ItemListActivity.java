@@ -4,39 +4,44 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.Fade;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.alejandro.aplicaciondelista.model.ItemProduct;
-import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
+import com.alejandro.aplicaciondelista.ItemCardActionListener;
+import com.alejandro.aplicaciondelista.ItemCustomActionListener;
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemContent;
+import com.alejandro.aplicaciondelista.model.ItemProduct;
+import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemCustomFragment;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.google.android.material.navigation.NavigationView;
 
 /**
  * Activity principal de la aplicacion
  */
-public class ItemListActivity extends AppCompatActivity {
+public class ItemListActivity extends AppCompatActivity implements ItemCardActionListener, ItemCustomActionListener {
 
+    private static final int CUSTOM_ACTIVITY = 1;
     private boolean largeScreen;
     private RecyclerView recyclerView;
+    private ItemViewAdapter itemAdapter;
+    private ItemCustomFragment itemCustomFragment;
+    private ItemDetailFragment itemDetailFragment;
+    private ItemProduct currentItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +56,6 @@ public class ItemListActivity extends AppCompatActivity {
             largeScreen = true;
 
         setupRecyclerView(findViewById(R.id.item_list));
-
         setupFloatingButtons();
 
     }
@@ -59,7 +63,9 @@ public class ItemListActivity extends AppCompatActivity {
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
 
-        recyclerView.setAdapter(new ItemViewAdapter(ItemContent.ITEMS, this::onCardItemClick));
+        itemAdapter = new ItemViewAdapter(this, ItemContent.ITEMS, this);
+
+        recyclerView.setAdapter(itemAdapter);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, largeScreen));
 
     }
@@ -82,12 +88,12 @@ public class ItemListActivity extends AppCompatActivity {
         FloatingActionButton addItemButton = findViewById(R.id.fab_add_item);
         addItemButton.setOnClickListener(view -> {
 
-            ItemProduct itemProduct = new ItemProduct();
+            currentItem = new ItemProduct();
 
             if(largeScreen)
-                launchCustomFragment(itemProduct);
+                launchCustomFragment();
             else
-                launchCustomActivity(itemProduct);
+                launchCustomActivity();
 
         });
 
@@ -98,72 +104,93 @@ public class ItemListActivity extends AppCompatActivity {
 
     private void setEditModeRecyclerView(boolean editMode){
 
-        ItemViewAdapter adapter = (ItemViewAdapter) recyclerView.getAdapter();
+        if(itemAdapter != null && editMode != itemAdapter.getEditMode()) {
 
-        if(adapter != null && editMode != adapter.getEditMode())
-            adapter.setEditMode(editMode);
+            itemAdapter.setEditMode(editMode);
+            changeState();
+
+        }
 
     }
 
-    private void launchCustomActivity(ItemProduct item){
+    private void changeState(){
+
+        removeFragment(itemCustomFragment);
+        removeFragment(itemDetailFragment);
+
+    }
+
+    private void removeFragment(Fragment fragment){
+
+        if(fragment != null)
+            getSupportFragmentManager().beginTransaction()
+                    .remove(fragment)
+                    .commit();
+
+    }
+
+    private void launchCustomActivity(){
 
         Intent intent = new Intent(this, ItemCustomActivity.class);
-        intent.putExtra(ItemCustomFragment.ARG_ITEM, item);
-        startActivity(intent);
+        intent.putExtra(ItemCustomFragment.ARG_ITEM, currentItem);
+
+        startActivityForResult(intent, CUSTOM_ACTIVITY);
 
     }
 
-    private void launchCustomFragment(ItemProduct item){
+    private void launchCustomFragment(){
 
         Bundle arguments = new Bundle();
-        arguments.putParcelable(ItemCustomFragment.ARG_ITEM, item);
+        arguments.putParcelable(ItemCustomFragment.ARG_ITEM, currentItem);
 
-        ItemCustomFragment fragment = new ItemCustomFragment();
-        fragment.setArguments(arguments);
-        fragment.setEnterTransition(new Fade());
-        fragment.setExitTransition(new Fade());
+        itemCustomFragment = new ItemCustomFragment(this);
+        itemCustomFragment.setArguments(arguments);
+        itemCustomFragment.setEnterTransition(new Fade());
+        itemCustomFragment.setExitTransition(new Fade());
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.item_detail_container, fragment)
+                .replace(R.id.item_detail_container, itemCustomFragment)
                 .commit();
 
     }
 
-    void onCardItemClick(View card, ItemProduct item, boolean editMode){
+    @Override
+    public void onCardItemClick(View card, ItemProduct item, boolean editMode){
+        this.currentItem = item;
 
         if (largeScreen)
             if(editMode)
-                launchCustomFragment(item);
+                launchCustomFragment();
             else
-                launchItemDetailFragment(item);
+                launchItemDetailFragment();
         else
             if(editMode)
-                launchCustomActivity(item);
+                launchCustomActivity();
             else
-                launchItemDetailActivity(card, item);
+                launchItemDetailActivity(card);
 
     }
 
-    private void launchItemDetailFragment(ItemProduct item){
+    private void launchItemDetailFragment(){
 
         Bundle arguments = new Bundle();
-        arguments.putParcelable(ItemDetailFragment.ARG_ITEM, item);
+        arguments.putParcelable(ItemDetailFragment.ARG_ITEM, currentItem);
 
-        ItemDetailFragment fragment = new ItemDetailFragment();
-        fragment.setArguments(arguments);
-        fragment.setEnterTransition(new Fade());
-        fragment.setExitTransition(new Fade());
+        itemDetailFragment = new ItemDetailFragment(this);
+        itemDetailFragment.setArguments(arguments);
+        itemDetailFragment.setEnterTransition(new Fade());
+        itemDetailFragment.setExitTransition(new Fade());
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.item_detail_container, fragment)
+                .replace(R.id.item_detail_container, itemDetailFragment)
                 .commit();
 
     }
 
-    private void launchItemDetailActivity(View card, ItemProduct item){
+    private void launchItemDetailActivity(View card){
 
         Intent intent = new Intent(this, ItemDetailActivity.class);
-        intent.putExtra(ItemDetailFragment.ARG_ITEM, item);
+        intent.putExtra(ItemDetailFragment.ARG_ITEM, currentItem);
 
         ImageView img = card.findViewById(R.id.image_card);
 
@@ -177,8 +204,51 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == CUSTOM_ACTIVITY){
+            if(data != null)
+                onSaveItemCustom(data.getParcelableExtra(ItemCustomFragment.ARG_ITEM));
+        }
+
+    }
+
+    @Override
+    public void onSaveItemCustom(ItemProduct item) {
+
+        if(!itemAdapter.getEditMode())
+            itemAdapter.addItem(item);
+        else
+            itemAdapter.updateItem(item);
+
+        changeState();
+
+    }
+
+    @Override
+    public void onCardItemRemoved(View card, ItemProduct item) {
+
+        if(currentItem != null)
+            if(item.getId().equals(currentItem.getId()))
+                changeState();
+
+    }
+
+    @Override
+    public void onChangeFavoriteState(boolean isFavorite) {
+        currentItem.setFavorite(isFavorite);
+        itemAdapter.updateItem(currentItem);
+        Log.d("PRUEBA", "FAV2: " + isFavorite);
+    }
+
+    public void doSmoothScroll(int position){
+        recyclerView.smoothScrollToPosition(position);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_item_list, menu);
         return true;
     }
 

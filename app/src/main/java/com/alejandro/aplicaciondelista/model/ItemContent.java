@@ -34,7 +34,7 @@ public class ItemContent {
                 "Item" + position,
                 makeDetails(position),
                 2.50+position,
-                new String[]{"bebida", "gluten"});
+                new String[]{"Bebida", "Gluten"});
     }
 
     private static String makeDetails(int position) {

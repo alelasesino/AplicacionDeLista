@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 public class ItemProduct implements Parcelable {
 
@@ -13,8 +14,11 @@ public class ItemProduct implements Parcelable {
     private String details;
     private double price;
     private String[] tags;
+    private boolean favorite;
 
-    public ItemProduct(){}
+    public ItemProduct(){
+        id = UUID.randomUUID().toString();
+    }
 
     public ItemProduct(String id, String imageUrl, String name, String details, double price, String[] tags) {
         this.id = id;
@@ -32,6 +36,7 @@ public class ItemProduct implements Parcelable {
         details = in.readString();
         price = in.readDouble();
         tags = in.createStringArray();
+        favorite = in.readByte() != 0;
     }
 
     public static final Creator<ItemProduct> CREATOR = new Creator<ItemProduct>() {
@@ -59,6 +64,7 @@ public class ItemProduct implements Parcelable {
         parcel.writeString(details);
         parcel.writeDouble(price);
         parcel.writeStringArray(tags);
+        parcel.writeByte((byte) (favorite ? 1 : 0));
     }
 
     public String getId() {
@@ -109,6 +115,14 @@ public class ItemProduct implements Parcelable {
         this.tags = tags;
     }
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
     @Override
     public String toString() {
         return "ItemProduct{" +
@@ -120,4 +134,5 @@ public class ItemProduct implements Parcelable {
                 ", tags=" + Arrays.toString(tags) +
                 '}';
     }
+
 }
