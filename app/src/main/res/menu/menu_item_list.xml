@@ -9,6 +9,7 @@
     <item
         android:id="@+id/menu_favoritos"
         android:title="Mostrar favoritos"
+        android:checkable="true"
         app:showAsAction="never" />
 
     <item

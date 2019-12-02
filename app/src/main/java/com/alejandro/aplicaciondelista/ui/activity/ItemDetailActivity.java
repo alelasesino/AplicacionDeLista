@@ -1,5 +1,6 @@
 package com.alejandro.aplicaciondelista.ui.activity;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Intent;
@@ -23,6 +24,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 public class ItemDetailActivity extends AppCompatActivity {
+
+    private ItemDetailFragment itemDetailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +57,11 @@ public class ItemDetailActivity extends AppCompatActivity {
             Bundle arguments = new Bundle();
             arguments.putParcelable(ItemDetailFragment.ARG_ITEM, intent.getParcelableExtra(ItemDetailFragment.ARG_ITEM));
 
-            ItemDetailFragment fragment = new ItemDetailFragment();
-            fragment.setArguments(arguments);
+            itemDetailFragment = new ItemDetailFragment();
+            itemDetailFragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.item_detail_container, fragment)
+                    .add(R.id.item_detail_container, itemDetailFragment)
                     .commit();
         }
 
@@ -142,7 +145,8 @@ public class ItemDetailActivity extends AppCompatActivity {
                 break;
 
             default:
-                onBackPressed();
+                itemDetailFragment.closeActivityWithResult();
+                //onBackPressed();
                 return true;
 
         }
@@ -152,4 +156,5 @@ public class ItemDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
+
 }

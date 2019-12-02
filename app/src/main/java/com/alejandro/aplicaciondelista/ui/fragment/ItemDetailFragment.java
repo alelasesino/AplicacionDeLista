@@ -1,6 +1,7 @@
 package com.alejandro.aplicaciondelista.ui.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -28,6 +29,7 @@ import android.widget.TextView;
 public class ItemDetailFragment extends Fragment {
 
     public static final String ARG_ITEM = "item_detail";
+    public static final String ARG_FAVORITE = "favorite";
 
     private Activity activity;
     private ItemProduct currentItem;
@@ -111,13 +113,17 @@ public class ItemDetailFragment extends Fragment {
         Utils.setText(tvPrice, Utils.toPrice(currentItem.getPrice()));
 
         setUpFavoriteState(currentItem.isFavorite());
-        Log.d("PRUEBA", "FAV: " + currentItem.isFavorite());
+
     }
 
     private void setUpFavoriteState(boolean isFavorite){
 
+        currentItem.setFavorite(isFavorite);
+
         if(listener != null)
             listener.onChangeFavoriteState(isFavorite);
+
+        if(btFavorite != null)
         btFavorite.setBackgroundResource(isFavorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
 
     }
@@ -141,6 +147,16 @@ public class ItemDetailFragment extends Fragment {
             initializeComponents(rootView);
 
         return rootView;
+    }
+
+    public void closeActivityWithResult(){
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(ARG_FAVORITE, currentItem.isFavorite());
+
+        activity.setResult(Activity.RESULT_OK, resultIntent);
+        activity.finishAfterTransition();
+
     }
 
 }

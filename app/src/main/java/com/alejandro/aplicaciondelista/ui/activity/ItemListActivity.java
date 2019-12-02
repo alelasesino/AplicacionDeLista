@@ -3,6 +3,7 @@ package com.alejandro.aplicaciondelista.ui.activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.security.ConfirmationNotAvailableException;
 import android.transition.Fade;
 import android.util.Log;
 import android.util.Pair;
@@ -29,6 +30,7 @@ import com.alejandro.aplicaciondelista.ui.fragment.ItemCustomFragment;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.android.material.navigation.NavigationView;
 
 /**
  * Activity principal de la aplicacion
@@ -36,12 +38,14 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 public class ItemListActivity extends AppCompatActivity implements ItemCardActionListener, ItemCustomActionListener {
 
     private static final int CUSTOM_ACTIVITY = 1;
+    private static final int DETAILS_ACTIVITY = 2;
     private boolean largeScreen;
     private RecyclerView recyclerView;
     private ItemViewAdapter itemAdapter;
     private ItemCustomFragment itemCustomFragment;
     private ItemDetailFragment itemDetailFragment;
     private ItemProduct currentItem;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
             largeScreen = true;
 
         setupRecyclerView(findViewById(R.id.item_list));
+        setupNavigationView(findViewById(R.id.nav_view));
         setupFloatingButtons();
 
     }
@@ -67,6 +72,20 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         recyclerView.setAdapter(itemAdapter);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, largeScreen));
+
+    }
+
+    private void setupNavigationView(NavigationView navigationView){
+        this.navigationView = navigationView;
+
+        /*navigationView.setNavigationItemSelectedListener(menuItem -> {
+
+            menuItem.setChecked(true);
+
+
+            return false;
+
+        });*/
 
     }
 
@@ -199,7 +218,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, pairs);
 
-        startActivity(intent, options.toBundle());
+        startActivityForResult(intent, DETAILS_ACTIVITY,options.toBundle());
 
     }
 
@@ -210,6 +229,9 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         if(requestCode == CUSTOM_ACTIVITY){
             if(data != null)
                 onSaveItemCustom(data.getParcelableExtra(ItemCustomFragment.ARG_ITEM));
+        } else if(requestCode == DETAILS_ACTIVITY){
+            if(data != null)
+                onChangeFavoriteState(data.getBooleanExtra(ItemDetailFragment.ARG_FAVORITE, false));
         }
 
     }
@@ -238,8 +260,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     @Override
     public void onChangeFavoriteState(boolean isFavorite) {
         currentItem.setFavorite(isFavorite);
-        itemAdapter.updateItem(currentItem);
-        Log.d("PRUEBA", "FAV2: " + isFavorite);
+        itemAdapter.updateFavoriteState(currentItem);
     }
 
     public void doSmoothScroll(int position){

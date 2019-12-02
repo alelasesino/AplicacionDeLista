@@ -144,6 +144,19 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
+    public void updateFavoriteState(ItemProduct item){
+
+        int position = getItemById(item.getId());
+
+        if(position != -1){
+
+            ItemProduct itemProduct = itemList.get(position);
+            itemProduct.setFavorite(item.isFavorite());
+
+        }
+
+    }
+
     private int getItemById(String id){
 
         int i = 0;
