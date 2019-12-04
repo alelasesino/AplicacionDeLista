@@ -1,29 +1,31 @@
 package com.alejandro.aplicaciondelista.ui.dialog;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.fragment.app.DialogFragment;
 
 import com.alejandro.aplicaciondelista.R;
-import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 
-public class FilterAlertDialog extends AppCompatDialogFragment {
+public class FilterAlertDialog extends DialogFragment {
 
-    @NonNull
+    public static FilterAlertDialog newInstance(String title) {
+        FilterAlertDialog frag = new FilterAlertDialog();
+        Bundle args = new Bundle();
+        args.putString("title", title);
+        frag.setArguments(args);
+        return frag;
+    }
+
+    @Nullable
     @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-
-        //AlertDialog.Builder builder = new AlertDialog.Builder(ItemListActivity.this);
-        //View rootView = getLayoutInflater().inflate(R.la)
-
-        return super.onCreateDialog(savedInstanceState);
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.filter_dialog, container);
     }
 
     @Override

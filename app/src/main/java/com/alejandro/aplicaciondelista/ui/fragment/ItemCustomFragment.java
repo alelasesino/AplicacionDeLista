@@ -145,7 +145,7 @@ public class ItemCustomFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.item_custom, container, false);
 
-        if(currentItem != null)
+        if(currentItem != null && rootView != null)
             initializeComponents(rootView);
 
         return rootView;

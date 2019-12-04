@@ -3,6 +3,7 @@ package com.alejandro.aplicaciondelista.ui.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
@@ -11,6 +12,7 @@ import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.TagViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ui.activity.ItemDetailActivity;
+import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -95,7 +97,13 @@ public class ItemDetailFragment extends Fragment {
             fabWebDetails = activity.findViewById(R.id.fab_web_details);
 
         if(fabWebDetails != null)
-            fabWebDetails.setOnClickListener(view -> ((ItemDetailActivity)activity).openWebDetails());
+            fabWebDetails.setOnClickListener(view -> {
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://www.burgerking.es/carta"));
+                startActivity(intent);
+
+            });
 
         if(btFavorite != null)
             btFavorite.setOnClickListener(view -> setUpFavoriteState(!currentItem.isFavorite()));
@@ -143,7 +151,7 @@ public class ItemDetailFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
 
-        if (currentItem != null)
+        if (currentItem != null && rootView != null)
             initializeComponents(rootView);
 
         return rootView;

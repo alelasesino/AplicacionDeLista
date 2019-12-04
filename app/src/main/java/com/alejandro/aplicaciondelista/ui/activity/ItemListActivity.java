@@ -8,6 +8,7 @@ import android.transition.Fade;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
@@ -26,6 +28,7 @@ import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
+import com.alejandro.aplicaciondelista.ui.dialog.FilterAlertDialog;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemCustomFragment;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -105,19 +108,21 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         });
 
         FloatingActionButton addItemButton = findViewById(R.id.fab_add_item);
-        addItemButton.setOnClickListener(view -> {
-
-            currentItem = new ItemProduct();
-
-            if(largeScreen)
-                launchCustomFragment();
-            else
-                launchCustomActivity();
-
-        });
+        addItemButton.setOnClickListener(view -> createNewItem());
 
         FloatingActionButton removeItemButton = findViewById(R.id.fab_remove_item);
         removeItemButton.setOnClickListener(view -> setEditModeRecyclerView(true));
+
+    }
+
+    private void createNewItem(){
+
+        currentItem = new ItemProduct();
+
+        if(largeScreen)
+            launchCustomFragment();
+        else
+            launchCustomActivity();
 
     }
 
@@ -271,6 +276,29 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_item_list, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.menu_add_item:
+                createNewItem();
+                break;
+            case R.id.menu_filtrar:
+                showFilterDialogFragment();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showFilterDialogFragment(){
+
+        FragmentManager manager = getSupportFragmentManager();
+        FilterAlertDialog dialog = FilterAlertDialog.newInstance("Filtrar productos");
+        dialog.show(manager, "filter_dialog");
+
     }
 
 }
