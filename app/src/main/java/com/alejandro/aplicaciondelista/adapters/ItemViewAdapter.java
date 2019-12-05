@@ -221,28 +221,35 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         }
 
         void bind(ItemProduct item){
-            
+
             removeCard.setVisibility(editMode ? View.VISIBLE : View.INVISIBLE);
 
-            String metric;
+            String metric = "xhdpi/";
 
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
             switch(metrics.densityDpi) {
                 case DisplayMetrics.DENSITY_LOW:
-                    Log.d("PRUEBA", "LOW");
-                    metric = "hdpi";
+                    metric = "ldpi/";
                     break;
-
                 case DisplayMetrics.DENSITY_MEDIUM:
-                    Log.d("PRUEBA", "MEDIUM");
+                    metric = "mdpi/";
                     break;
-
                 case DisplayMetrics.DENSITY_HIGH:
-                    Log.d("PRUEBA", "HIGHT");
+                    metric = "hdpi/";
+                    break;
+                case DisplayMetrics.DENSITY_XHIGH:
+                    metric = "xhdpi/";
+                    break;
+                case DisplayMetrics.DENSITY_XXHIGH:
+                    metric = "xxhdpi/";
+                    break;
+                case DisplayMetrics.DENSITY_XXXHIGH:
+                    metric = "xxxhdpi/";
                     break;
             }
 
-            Picasso.with(context).load(ItemContent.URL_IMAGES_BASE+item.getImageUrl()+".png").placeholder(R.drawable.burger).into(imageCard);
+            String URL = ItemContent.URL_IMAGES_BASE + metric + item.getImageUrl() + ".png";
+            Picasso.with(context).load(URL).placeholder(R.drawable.ic_broken_image_black).into(imageCard);
 
             nameCard.setText(item.getName());
             detailsCard.setText(item.getDetails());

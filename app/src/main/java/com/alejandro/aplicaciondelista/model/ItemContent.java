@@ -22,7 +22,7 @@ public class ItemContent {
 
     public static final List<ItemProduct> ITEMS = new ArrayList<>();
 
-    public static final String URL_IMAGES_BASE = "https://android-rest.000webhostapp.com/images/xhdpi/";
+    public static final String URL_IMAGES_BASE = "https://android-rest.000webhostapp.com/images/";
     private static final String URL_API_REST_BASE = "https://api-rest-android.herokuapp.com/";
     private static final String URL_PRODUCTS = "test";
 
