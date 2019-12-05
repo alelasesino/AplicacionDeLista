@@ -129,7 +129,7 @@ public class ItemProduct implements Parcelable {
                 "id='" + id + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", name='" + name + '\'' +
-                ", details='" + details + '\'' +
+                /*", details='" + details + '\'' +*/
                 ", price=" + price +
                 ", tags=" + Arrays.toString(tags) +
                 '}';

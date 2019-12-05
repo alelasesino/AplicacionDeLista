@@ -62,7 +62,8 @@
         android:layout_gravity="center_vertical|start"
         style="?android:attr/borderlessButtonStyle"
         app:layout_anchor="@+id/item_detail_container"
-        app:layout_anchorGravity="top|end" />
+        app:layout_anchorGravity="top|end"
+        android:elevation="5dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_web_details"

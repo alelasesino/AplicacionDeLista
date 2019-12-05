@@ -1,20 +1,92 @@
 package com.alejandro.aplicaciondelista.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.content.Context;
+import android.util.Log;
+
+import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ItemContent {
 
-    /**
-     * An array of sample (dummy) items.
-     */
     public static final List<ItemProduct> ITEMS = new ArrayList<>();
 
+    public static final String URL_IMAGES_BASE = "https://android-rest.000webhostapp.com/images/xhdpi/";
+    private static final String URL_API_REST_BASE = "https://api-rest-android.herokuapp.com/";
+    private static final String URL_PRODUCTS = "test";
+
+    public static void loadItemsApiRest(Context context, IItemContent listener){
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL_API_REST_BASE + URL_PRODUCTS, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+
+                    JSONArray datos = response.getJSONArray("datos");
+
+                    for(int i = 0; i<datos.length(); i++){
+
+                        JSONObject categoria = datos.getJSONObject(i);
+                        JSONArray productos = categoria.getJSONArray("productos");
+
+                        for(int j = 0; j <productos.length(); j++)
+                            addItem(productos.getJSONObject(j));
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                listener.onDataFinished();
+
+            }
+
+            private void addItem(JSONObject producto) throws JSONException{
+
+                ItemProduct itemProduct = new ItemProduct();
+                itemProduct.setId(producto.getString("_id"));
+                itemProduct.setDetails(producto.getString("descripcion"));
+                itemProduct.setImageUrl(producto.getString("imagen"));
+                itemProduct.setName(producto.getString("nombre"));
+                itemProduct.setPrice(producto.getDouble("precio"));
+
+                ITEMS.add(itemProduct);
+
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("PRUEBA", "Error: " + error.getMessage());
+
+            }
+        });
+
+        queue.add(request);
+
+    }
+
+    public interface IItemContent{
+        void onDataFinished();
+    }
+
+/*
     private static final int COUNT = 10;
 
     static {
@@ -42,6 +114,6 @@ public class ItemContent {
         builder.append("Lorem Ipsum es el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas Letraset, las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.");
 
         return builder.toString();
-    }
+    }*/
 
 }

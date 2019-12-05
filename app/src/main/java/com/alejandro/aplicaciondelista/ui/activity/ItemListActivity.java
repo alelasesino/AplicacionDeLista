@@ -1,10 +1,12 @@
 package com.alejandro.aplicaciondelista.ui.activity;
 
 import android.app.ActivityOptions;
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.security.ConfirmationNotAvailableException;
 import android.transition.Fade;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
@@ -54,6 +56,8 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
+
+        ItemContent.loadItemsApiRest(this, this::refreshRecyclerView);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -112,6 +116,14 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         FloatingActionButton removeItemButton = findViewById(R.id.fab_remove_item);
         removeItemButton.setOnClickListener(view -> setEditModeRecyclerView(true));
+
+    }
+
+    public void refreshRecyclerView(){
+
+        if(recyclerView.getAdapter() != null){
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
 
     }
 

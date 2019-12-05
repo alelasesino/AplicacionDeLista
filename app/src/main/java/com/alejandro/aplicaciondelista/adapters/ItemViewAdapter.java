@@ -1,6 +1,8 @@
 package com.alejandro.aplicaciondelista.adapters;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,14 +20,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alejandro.aplicaciondelista.Utils;
+import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
+public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> implements Filterable {
 
     private final List<ItemProduct> itemList;
     private ItemCardActionListener cardAction;
@@ -170,6 +176,11 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
+    @Override
+    public Filter getFilter() {
+        return null;
+    }
+
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final Button removeCard;
@@ -212,7 +223,27 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         void bind(ItemProduct item){
             
             removeCard.setVisibility(editMode ? View.VISIBLE : View.INVISIBLE);
-            //imageCard.setImageDrawable(item.image);
+
+            String metric;
+
+            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+            switch(metrics.densityDpi) {
+                case DisplayMetrics.DENSITY_LOW:
+                    Log.d("PRUEBA", "LOW");
+                    metric = "hdpi";
+                    break;
+
+                case DisplayMetrics.DENSITY_MEDIUM:
+                    Log.d("PRUEBA", "MEDIUM");
+                    break;
+
+                case DisplayMetrics.DENSITY_HIGH:
+                    Log.d("PRUEBA", "HIGHT");
+                    break;
+            }
+
+            Picasso.with(context).load(ItemContent.URL_IMAGES_BASE+item.getImageUrl()+".png").placeholder(R.drawable.burger).into(imageCard);
+
             nameCard.setText(item.getName());
             detailsCard.setText(item.getDetails());
             priceCard.setText(Utils.toPrice(item.getPrice()));
