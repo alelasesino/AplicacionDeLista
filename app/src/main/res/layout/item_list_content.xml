@@ -51,9 +51,14 @@
             <TextView
                 android:id="@+id/name_card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cheese Burguer"
-                android:textSize="21sp"
+                android:layout_height="25dp"
+                android:paddingHorizontal="3dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeMaxTextSize="21sp"
+                android:autoSizeStepGranularity="2sp"
+                android:maxLines="1"
+                android:text="Ensencia Manzana"
                 android:textColor="#B9000000"
                 android:fontFamily="@font/insanibu"
                 android:textAlignment="center"/>

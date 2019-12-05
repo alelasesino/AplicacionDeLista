@@ -27,6 +27,7 @@ import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> implements Filterable {
@@ -224,31 +225,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
             removeCard.setVisibility(editMode ? View.VISIBLE : View.INVISIBLE);
 
-            String metric = "xhdpi/";
-
-            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-            switch(metrics.densityDpi) {
-                case DisplayMetrics.DENSITY_LOW:
-                    metric = "ldpi/";
-                    break;
-                case DisplayMetrics.DENSITY_MEDIUM:
-                    metric = "mdpi/";
-                    break;
-                case DisplayMetrics.DENSITY_HIGH:
-                    metric = "hdpi/";
-                    break;
-                case DisplayMetrics.DENSITY_XHIGH:
-                    metric = "xhdpi/";
-                    break;
-                case DisplayMetrics.DENSITY_XXHIGH:
-                    metric = "xxhdpi/";
-                    break;
-                case DisplayMetrics.DENSITY_XXXHIGH:
-                    metric = "xxxhdpi/";
-                    break;
-            }
-
-            String URL = ItemContent.URL_IMAGES_BASE + metric + item.getImageUrl() + ".png";
+            String URL = ItemContent.URL_IMAGES_BASE + Utils.getDensityString(context.getResources().getDisplayMetrics()) + item.getImageUrl() + ".png";
             Picasso.with(context).load(URL).placeholder(R.drawable.ic_broken_image_black).into(imageCard);
 
             nameCard.setText(item.getName());
