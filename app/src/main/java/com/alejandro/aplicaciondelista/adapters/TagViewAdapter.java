@@ -1,6 +1,5 @@
 package com.alejandro.aplicaciondelista.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +17,6 @@ import com.alejandro.aplicaciondelista.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class TagViewAdapter extends RecyclerView.Adapter<TagViewAdapter.TagViewHolder> {
 

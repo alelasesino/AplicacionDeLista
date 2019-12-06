@@ -24,7 +24,8 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:background="@drawable/background_product">
 
-            <!--<ImageView
+            <ImageView
+                android:id="@+id/custom_image_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -32,7 +33,7 @@
                 android:transitionName="card_image_transition"
                 android:scaleType="fitCenter"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="65dp"/>-->
+                android:layout_marginBottom="65dp"/>
 
             <EditText
                 android:id="@+id/txt_name"

@@ -3,6 +3,8 @@ package com.alejandro.aplicaciondelista.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -20,16 +22,7 @@ public class ItemProduct implements Parcelable {
         id = UUID.randomUUID().toString();
     }
 
-    public ItemProduct(String id, String imageUrl, String name, String details, double price, String[] tags) {
-        this.id = id;
-        this.imageUrl = imageUrl;
-        this.name = name;
-        this.details = details;
-        this.price = price;
-        this.tags = tags;
-    }
-
-    protected ItemProduct(Parcel in) {
+    private ItemProduct(Parcel in) {
         id = in.readString();
         imageUrl = in.readString();
         name = in.readString();
@@ -123,6 +116,7 @@ public class ItemProduct implements Parcelable {
         this.favorite = favorite;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "ItemProduct{" +

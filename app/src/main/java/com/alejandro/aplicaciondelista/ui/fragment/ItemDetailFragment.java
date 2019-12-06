@@ -3,7 +3,6 @@ package com.alejandro.aplicaciondelista.ui.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
@@ -11,8 +10,6 @@ import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.TagViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
-import com.alejandro.aplicaciondelista.ui.activity.ItemDetailActivity;
-import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -21,11 +18,11 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ItemDetailFragment extends Fragment {
@@ -36,11 +33,10 @@ public class ItemDetailFragment extends Fragment {
     private Activity activity;
     private ItemProduct currentItem;
 
-    private FloatingActionButton fabWebDetails;
+    private ImageView imageDetailsHeader;
     private Button btFavorite;
     private TextView tvPrice;
     private TextView tvDetails;
-    private RecyclerView tagRecycler;
     private ItemCardActionListener listener;
 
     public ItemDetailFragment() {
@@ -78,12 +74,16 @@ public class ItemDetailFragment extends Fragment {
 
     }
 
-    private void initializeComponents(View fragmentView){
+    private void initializeComponents(View fragmentView){ //TODO CREAR UN ESTADO EVITAR LOS == NULL
 
+        imageDetailsHeader = fragmentView.findViewById(R.id.image_details_header);
         tvPrice = fragmentView.findViewById(R.id.tv_price);
         tvDetails = fragmentView.findViewById(R.id.tv_details);
-        fabWebDetails = fragmentView.findViewById(R.id.fab_web_details);
+        FloatingActionButton fabWebDetails = fragmentView.findViewById(R.id.fab_web_details);
         btFavorite = fragmentView.findViewById(R.id.bt_favorite);
+
+        if(imageDetailsHeader == null)
+            imageDetailsHeader = activity.findViewById(R.id.image_details_header);
 
         if(btFavorite == null)
             btFavorite = activity.findViewById(R.id.bt_favorite);
@@ -97,18 +97,12 @@ public class ItemDetailFragment extends Fragment {
             fabWebDetails = activity.findViewById(R.id.fab_web_details);
 
         if(fabWebDetails != null)
-            fabWebDetails.setOnClickListener(view -> {
-
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://www.burgerking.es/carta"));
-                startActivity(intent);
-
-            });
+            fabWebDetails.setOnClickListener(view -> Utils.openWeb(activity, Utils.URL_BURGER_KING));
 
         if(btFavorite != null)
             btFavorite.setOnClickListener(view -> setUpFavoriteState(!currentItem.isFavorite()));
 
-        tagRecycler = fragmentView.findViewById(R.id.tags_recycler);
+        RecyclerView tagRecycler = fragmentView.findViewById(R.id.tags_recycler);
         tagRecycler.setAdapter(new TagViewAdapter(currentItem.getTags(), false));
 
         bindDataProducts();
@@ -117,6 +111,7 @@ public class ItemDetailFragment extends Fragment {
 
     private void bindDataProducts(){
 
+        Utils.loadPicassoImage(activity, imageDetailsHeader, currentItem.getImageUrl());
         Utils.setText(tvDetails, currentItem.getDetails());
         Utils.setText(tvPrice, Utils.toPrice(currentItem.getPrice()));
 

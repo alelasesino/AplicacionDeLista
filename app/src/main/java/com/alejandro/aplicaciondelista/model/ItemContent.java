@@ -3,11 +3,9 @@ package com.alejandro.aplicaciondelista.model;
 import android.content.Context;
 import android.util.Log;
 
-import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -24,7 +22,7 @@ public class ItemContent {
 
     public static final String URL_IMAGES_BASE = "https://android-rest.000webhostapp.com/images/";
     private static final String URL_API_REST_BASE = "https://api-rest-android.herokuapp.com/";
-    private static final String URL_PRODUCTS = "test";
+    private static final String URL_PRODUCTS = "products";
 
     public static void loadItemsApiRest(Context context, IItemContent listener){
 
@@ -38,16 +36,8 @@ public class ItemContent {
 
                     JSONArray datos = response.getJSONArray("datos");
 
-                    for(int i = 0; i<datos.length(); i++){
-
-                        JSONObject categoria = datos.getJSONObject(i);
-                        JSONArray productos = categoria.getJSONArray("productos");
-
-                        for(int j = 0; j <productos.length(); j++)
-                            addItem(productos.getJSONObject(j));
-
-                    }
-
+                    for(int i = 0; i<datos.length(); i++)
+                        addItem(datos.getJSONObject(i));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -65,18 +55,25 @@ public class ItemContent {
                 itemProduct.setImageUrl(producto.getString("imagen"));
                 itemProduct.setName(producto.getString("nombre"));
                 itemProduct.setPrice(producto.getDouble("precio"));
+                itemProduct.setTags(getItemTags(producto.getJSONArray("tags")));
 
                 ITEMS.add(itemProduct);
 
             }
 
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("PRUEBA", "Error: " + error.getMessage());
+            private String[] getItemTags(JSONArray tags) throws JSONException{
+
+                String[] itemTags = new String[tags.length()];
+                for(int i = 0; i<itemTags.length; i++)
+                    itemTags[i] = tags.getString(i);
+
+                return itemTags;
 
             }
-        });
+
+        }, error -> Log.e("PRUEBA", "Error al cargar los datos: " + error.getMessage()));
+
+        ITEMS.clear();
 
         queue.add(request);
 

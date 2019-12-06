@@ -1,8 +1,6 @@
 package com.alejandro.aplicaciondelista.adapters;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +9,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,18 +16,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alejandro.aplicaciondelista.Utils;
-import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
-import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> implements Filterable {
+public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
 
+    private final List<ItemProduct> itemListFull;
     private final List<ItemProduct> itemList;
     private ItemCardActionListener cardAction;
     private boolean editMode;
@@ -41,7 +37,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         this.context = context;
         this.cardAction = cardAction;
         itemList = items;
-
+        itemListFull = new ArrayList<>(items);
     }
 
     @NonNull
@@ -80,7 +76,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
         AnimationSet animation = new AnimationSet(true);
         animation.addAnimation(new AlphaAnimation(0.0F, 1.0F));
-        animation.addAnimation(new ScaleAnimation(0.8f, 1, 0.8f, 1)); // Change args as desired
+        animation.addAnimation(new ScaleAnimation(0.8f, 1, 0.8f, 1));
         animation.setDuration(400);
         view.startAnimation(animation);
 
@@ -91,7 +87,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
         AnimationSet animation = new AnimationSet(true);
         animation.addAnimation(new AlphaAnimation(1.0F, 0.0F));
-        animation.addAnimation(new ScaleAnimation(1, 0.8f, 1, 0.8f)); // Change args as desired
+        animation.addAnimation(new ScaleAnimation(1, 0.8f, 1, 0.8f));
         animation.setDuration(400);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -101,6 +97,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
             @Override
             public void onAnimationEnd(Animation animation) {
                 itemList.remove(position);
+                itemListFull.remove(position);
                 notifyItemRemoved(position);
             }
 
@@ -128,6 +125,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     public void addItem(ItemProduct item){
         itemList.add(item);
+        itemListFull.add(item);
         ((ItemListActivity)context).doSmoothScroll(getItemCount());
         notifyItemInserted(getItemCount());
 
@@ -145,6 +143,14 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
             itemProduct.setPrice(item.getPrice());
             itemProduct.setDetails(item.getDetails());
             itemProduct.setImageUrl(item.getImageUrl());
+
+            ItemProduct itemProductFull = itemListFull.get(position);
+            itemProductFull.setName(item.getName());
+            itemProductFull.setTags(item.getTags());
+            itemProductFull.setPrice(item.getPrice());
+            itemProductFull.setDetails(item.getDetails());
+            itemProductFull.setImageUrl(item.getImageUrl());
+
             notifyItemChanged(position);
 
         }
@@ -177,9 +183,92 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
-    @Override
-    public Filter getFilter() {
-        return null;
+    public void setFavoriteFilter(boolean filter){
+
+        IFilterAdapter favoriteFilter = (item, tags) -> item.isFavorite();
+
+        setFilter(favoriteFilter, filter, null);
+
+    }
+
+    public void setTagsFilter(boolean filter, String[] tagsToFilter){
+
+        IFilterAdapter tagsFilter = (item, tags) -> {
+
+            for(String tag: tags) {
+
+                String[] itemTags = item.getTags();
+
+                if(itemTags != null && tag != null)
+
+                    if(Arrays.asList(itemTags).contains(tag)) {
+                        return true;
+                    }
+            }
+
+            return false;
+
+        };
+
+        setFilter(tagsFilter, filter, tagsToFilter);
+
+    }
+
+    private void setFilter(IFilterAdapter iFilter, boolean filter, String[] tags){
+
+        itemList.clear();
+
+        if(filter){
+
+            List<ItemProduct> filteredList = new ArrayList<>();
+
+            for(ItemProduct item: itemListFull){
+
+                if(iFilter.filterItem(item, tags))
+                    filteredList.add(item);
+
+            }
+
+            itemList.addAll(filteredList);
+
+        } else {
+
+            itemList.addAll(itemListFull);
+
+        }
+
+        notifyDataSetChanged();
+
+    }
+
+    public void orderByPrice(boolean ascendente){
+
+        itemList.sort((itemProduct, itemProduct2) -> {
+
+            if(itemProduct2.getPrice() == itemProduct.getPrice())
+                return 0;
+
+            if(ascendente){
+
+                if(itemProduct2.getPrice() < itemProduct.getPrice())
+                    return 1;
+
+            } else {
+
+                if(itemProduct2.getPrice() > itemProduct.getPrice())
+                    return 1;
+
+            }
+
+            return -1;
+
+        });
+        notifyDataSetChanged();
+
+    }
+
+    private interface IFilterAdapter{
+        boolean filterItem(ItemProduct item, String[] tags);
     }
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -224,10 +313,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         void bind(ItemProduct item){
 
             removeCard.setVisibility(editMode ? View.VISIBLE : View.INVISIBLE);
-
-            String URL = ItemContent.URL_IMAGES_BASE + Utils.getDensityString(context.getResources().getDisplayMetrics()) + item.getImageUrl() + ".png";
-            Picasso.with(context).load(URL).placeholder(R.drawable.ic_broken_image_black).into(imageCard);
-
+            Utils.loadPicassoImage(context, imageCard, item.getImageUrl());
             nameCard.setText(item.getName());
             detailsCard.setText(item.getDetails());
             priceCard.setText(Utils.toPrice(item.getPrice()));

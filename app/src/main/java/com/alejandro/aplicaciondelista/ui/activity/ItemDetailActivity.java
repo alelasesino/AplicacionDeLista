@@ -1,24 +1,19 @@
 package com.alejandro.aplicaciondelista.ui.activity;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.alejandro.aplicaciondelista.R;
+import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -34,14 +29,6 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = findViewById(R.id.fab_web_details);
-        fab.setOnClickListener((view)->{
-
-            Snackbar.make(view, "Redireccionar a la web burger king", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-
-        });
 
         setHomeButtonActionBar();
         argumentsReceived(savedInstanceState);
@@ -63,6 +50,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, itemDetailFragment)
                     .commit();
+
         }
 
     }
@@ -81,9 +69,7 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     public void openWebDetails(){
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("https://www.burgerking.es/carta"));
-        startActivity(intent);
+        Utils.openWeb(this,Utils.URL_BURGER_KING);
 
     }
 

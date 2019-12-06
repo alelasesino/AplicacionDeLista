@@ -1,24 +1,23 @@
 package com.alejandro.aplicaciondelista.ui.activity;
 
 import android.app.ActivityOptions;
-import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.security.ConfirmationNotAvailableException;
 import android.transition.Fade;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.ItemCustomActionListener;
 import com.alejandro.aplicaciondelista.R;
+import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
@@ -36,6 +36,10 @@ import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Activity principal de la aplicacion
@@ -50,14 +54,13 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private ItemCustomFragment itemCustomFragment;
     private ItemDetailFragment itemDetailFragment;
     private ItemProduct currentItem;
-    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        ItemContent.loadItemsApiRest(this, this::refreshRecyclerView);
+        ItemContent.loadItemsApiRest(this, () -> setupRecyclerView(findViewById(R.id.item_list)));
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -66,7 +69,6 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         if (findViewById(R.id.item_detail_container) != null) //large-screen layouts (res/values-w900dp)
             largeScreen = true;
 
-        setupRecyclerView(findViewById(R.id.item_list));
         setupNavigationView(findViewById(R.id.nav_view));
         setupFloatingButtons();
 
@@ -83,16 +85,36 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     }
 
     private void setupNavigationView(NavigationView navigationView){
-        this.navigationView = navigationView;
 
-        /*navigationView.setNavigationItemSelectedListener(menuItem -> {
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
 
-            menuItem.setChecked(true);
+            switch (menuItem.getItemId()){
+                case R.id.nav_all:
+                    itemAdapter.setTagsFilter(false, null);
+                    break;
+                case R.id.nav_burgers:
+                    itemAdapter.setTagsFilter(true, new String[]{"Burger"});
+                    break;
+                case R.id.nav_bebidas:
+                    itemAdapter.setTagsFilter(true, new String[]{"Bebida"});
+                    break;
+                case R.id.nav_postres:
+                    itemAdapter.setTagsFilter(true, new String[]{"Postre"});
+                    break;
+                case R.id.nav_salsas:
+                    itemAdapter.setTagsFilter(true, new String[]{"Salsa"});
+                    break;
+                case R.id.nav_visit:
+                    Utils.openWeb(this, Utils.OWNER_GITHUB);
+                    break;
+            }
 
+            DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+            drawerLayout.closeDrawer(GravityCompat.START, true);
 
             return false;
 
-        });*/
+        });
 
     }
 
@@ -119,14 +141,6 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
-    public void refreshRecyclerView(){
-
-        if(recyclerView.getAdapter() != null){
-            recyclerView.getAdapter().notifyDataSetChanged();
-        }
-
-    }
-
     private void createNewItem(){
 
         currentItem = new ItemProduct();
@@ -134,7 +148,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         if(largeScreen)
             launchCustomFragment();
         else
-            launchCustomActivity();
+            launchCustomActivity(null);
 
     }
 
@@ -165,12 +179,27 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
-    private void launchCustomActivity(){
+    private void launchCustomActivity(View card){
+
 
         Intent intent = new Intent(this, ItemCustomActivity.class);
         intent.putExtra(ItemCustomFragment.ARG_ITEM, currentItem);
 
-        startActivityForResult(intent, CUSTOM_ACTIVITY);
+        if(card != null){
+
+            ImageView img = card.findViewById(R.id.image_card);
+
+            Pair<View, String> pair = new Pair<>(img, "card_image_transition");
+
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, pair);
+
+            startActivityForResult(intent, CUSTOM_ACTIVITY, options.toBundle());
+
+        } else {
+
+            startActivityForResult(intent, CUSTOM_ACTIVITY);
+
+        }
 
     }
 
@@ -201,7 +230,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
                 launchItemDetailFragment();
         else
             if(editMode)
-                launchCustomActivity();
+                launchCustomActivity(card);
             else
                 launchItemDetailActivity(card);
 
@@ -225,17 +254,16 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     private void launchItemDetailActivity(View card){
 
+        ImageView img = card.findViewById(R.id.image_card);
+
         Intent intent = new Intent(this, ItemDetailActivity.class);
         intent.putExtra(ItemDetailFragment.ARG_ITEM, currentItem);
 
-        ImageView img = card.findViewById(R.id.image_card);
+        Pair<View, String> pair = new Pair<>(img, "card_image_transition");
 
-        Pair[] pairs = new Pair[1];
-        pairs[0] = new Pair<View, String>(img, "card_image_transition");
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, pair);
 
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, pairs);
-
-        startActivityForResult(intent, DETAILS_ACTIVITY,options.toBundle());
+        startActivityForResult(intent, DETAILS_ACTIVITY, options.toBundle());
 
     }
 
@@ -276,8 +304,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     @Override
     public void onChangeFavoriteState(boolean isFavorite) {
-        currentItem.setFavorite(isFavorite);
-        itemAdapter.updateFavoriteState(currentItem);
+        if(currentItem != null){
+            currentItem.setFavorite(isFavorite);
+            itemAdapter.updateFavoriteState(currentItem);
+        }
     }
 
     public void doSmoothScroll(int position){
@@ -300,16 +330,56 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
             case R.id.menu_filtrar:
                 showFilterDialogFragment();
                 break;
+            case R.id.menu_favoritos:
+                setFavoriteMode(item);
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void setFavoriteMode(MenuItem menu){
+
+        menu.setChecked(!menu.isChecked());
+        itemAdapter.setFavoriteFilter(menu.isChecked());
+
+    }
+
     private void showFilterDialogFragment(){
 
         FragmentManager manager = getSupportFragmentManager();
-        FilterAlertDialog dialog = FilterAlertDialog.newInstance("Filtrar productos");
+        FilterAlertDialog dialog = FilterAlertDialog.newInstance("Filtrar productos", this::onFilterAlertAccept);
         dialog.show(manager, "filter_dialog");
+
+    }
+
+    private void onFilterAlertAccept(boolean applyFilter, boolean priceAsc, /*boolean nameAsc,*/ String[] tags){
+
+        if(tags.length > 0)
+            itemAdapter.setTagsFilter(applyFilter, tags);
+
+        itemAdapter.orderByPrice(priceAsc);
+
+        saveFilterPreferences(applyFilter, priceAsc, tags);
+
+    }
+
+    private void saveFilterPreferences(boolean applyFilter, boolean priceAsc, String[] tags){
+
+        SharedPreferences prefs = getSharedPreferences(FilterAlertDialog.FILTER_PREFERENCE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(FilterAlertDialog.PREF_FILTER, applyFilter);
+        editor.putInt(FilterAlertDialog.PREF_PRICE, priceAsc ? 1 : 0);
+
+        if(tags != null){
+
+            Set<String> tagSet = new HashSet<>();
+            Collections.addAll(tagSet, tags);
+
+            editor.putStringSet(FilterAlertDialog.PREF_TAGS, tagSet);
+
+        }
+
+        editor.apply();
 
     }
 

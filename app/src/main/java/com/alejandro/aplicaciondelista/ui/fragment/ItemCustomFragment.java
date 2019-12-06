@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,10 +25,9 @@ public class ItemCustomFragment extends Fragment {
     public static final String ARG_ITEM = "item_custom";
 
     private Activity activity;
+    private ImageView headerImageView;
     private EditText txtName, txtDetails, txtPrice, txtTag;
-    private Button btAddTag;
-    private FloatingActionButton btSave;
-    private RecyclerView tagRecycler;
+    private TagViewAdapter tagAdapter;
 
     private ItemProduct currentItem;
     private ItemCustomActionListener customActionListener;
@@ -65,11 +65,10 @@ public class ItemCustomFragment extends Fragment {
         item.setName(txtName.getText().toString());
         item.setDetails(txtDetails.getText().toString());
         item.setPrice(Utils.priceToString(txtPrice.getText().toString()));
+        item.setImageUrl(currentItem.getImageUrl());
+        item.setFavorite(currentItem.isFavorite());
 
-        TagViewAdapter adapter = (TagViewAdapter)tagRecycler.getAdapter();
-
-        if(adapter != null)
-            item.setTags(adapter.getTags());
+        item.setTags(tagAdapter.getTags());
 
         return item;
 
@@ -77,12 +76,16 @@ public class ItemCustomFragment extends Fragment {
 
     private void initializeComponents(View fragmentView){
 
+        headerImageView = fragmentView.findViewById(R.id.custom_image_header);
         txtName = fragmentView.findViewById(R.id.txt_name);
         txtDetails = fragmentView.findViewById(R.id.txt_details);
         txtPrice = fragmentView.findViewById(R.id.txt_price);
         txtTag = fragmentView.findViewById(R.id.txt_tag);
-        btAddTag = fragmentView.findViewById(R.id.bt_add_tag);
-        btSave = fragmentView.findViewById(R.id.fab_save_item);
+        Button btAddTag = fragmentView.findViewById(R.id.bt_add_tag);
+        FloatingActionButton btSave = fragmentView.findViewById(R.id.fab_save_item);
+
+        if(headerImageView == null)
+            headerImageView = activity.findViewById(R.id.custom_image_header);
 
         if(txtName == null)
             txtName = activity.findViewById(R.id.txt_name);
@@ -93,8 +96,10 @@ public class ItemCustomFragment extends Fragment {
         if(btSave == null)
             btSave = activity.findViewById(R.id.fab_save_item);
 
-        tagRecycler = fragmentView.findViewById(R.id.tags_recycler);
-        tagRecycler.setAdapter(new TagViewAdapter(currentItem.getTags(), true));
+        RecyclerView tagRecycler = fragmentView.findViewById(R.id.tags_recycler);
+
+        tagAdapter = new TagViewAdapter(currentItem.getTags(), true);
+        tagRecycler.setAdapter(tagAdapter);
 
         if(btSave != null)
             btSave.setOnClickListener(view -> {
@@ -111,7 +116,7 @@ public class ItemCustomFragment extends Fragment {
 
                 if(!txtTag.getText().toString().equals("")){//TODO REFACTORIZAR
 
-                    ((TagViewAdapter)tagRecycler.getAdapter()).addItem(Utils.capitalize(txtTag.getText().toString()));
+                    tagAdapter.addItem(Utils.capitalize(txtTag.getText().toString()));
                     txtTag.setText("");
 
                 }
@@ -134,9 +139,14 @@ public class ItemCustomFragment extends Fragment {
 
     private void bindDataProducts(){
 
+        Utils.loadPicassoImage(getActivity(), headerImageView, currentItem.getImageUrl());
         Utils.setText(txtName, currentItem.getName());
         Utils.setText(txtDetails, currentItem.getDetails());
-        Utils.setText(txtPrice, Utils.toPrice(currentItem.getPrice()));
+
+        if(currentItem.getPrice() == 0)
+            Utils.setText(txtPrice, "");
+        else
+            Utils.setText(txtPrice, Utils.toPrice(currentItem.getPrice()));
 
     }
 

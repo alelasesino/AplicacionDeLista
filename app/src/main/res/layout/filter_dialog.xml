@@ -22,13 +22,32 @@
         android:orientation="vertical"
         android:layout_gravity="center">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:text="Aplicar filtro: "/>
+
+            <Switch
+                android:id="@+id/switch_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"/>
+
+        </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ordenar productos por"
             android:textSize="15sp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginStart="15dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,12 +67,13 @@
                     android:text="Precio"/>
 
                 <Spinner
+                    android:id="@+id/spinner_precio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
-            <LinearLayout
+            <!--<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -64,10 +84,11 @@
                     android:text="Nombre"/>
 
                 <Spinner
+                    android:id="@+id/spinner_nombre"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-            </LinearLayout>
+            </LinearLayout>-->
 
         </LinearLayout>
 
@@ -76,8 +97,7 @@
             android:layout_height="wrap_content"
             android:text="Filtrar por tags"
             android:textSize="15sp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginStart="15dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -120,7 +140,7 @@
             android:layout_marginVertical="10dp">
 
             <Button
-                android:id="@+id/btStart"
+                android:id="@+id/bt_aceptar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Aceptar"
@@ -131,7 +151,7 @@
                 android:textColor="#FFFFFF"/>
 
             <Button
-                android:id="@+id/btEnd"
+                android:id="@+id/bt_cancelar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Cancelar"

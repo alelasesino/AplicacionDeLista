@@ -1,21 +1,30 @@
 package com.alejandro.aplicaciondelista;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.DisplayMetrics;
-import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.alejandro.aplicaciondelista.model.ItemContent;
+import com.squareup.picasso.Picasso;
 import java.text.DecimalFormat;
-import java.util.HashMap;
 
 public class Utils {
+
+    public static final String URL_BURGER_KING = "https://www.burgerking.es/carta";
+    public static final String OWNER_GITHUB = "https://github.com/alelasesino/AplicacionDeLista";
 
     public static String toPrice(double price){
         return new DecimalFormat("##,##0.00 €").format(price);
     }
 
     public static double priceToString(String price){
+
+        if(price.equals("")) return 0;
+
         return Double.parseDouble(price.replace(",", ".").replace("€", ""));
+
     }
 
     public static void setText(TextView editText, String text){
@@ -29,7 +38,7 @@ public class Utils {
         return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
     }
 
-    public static String getDensityString(DisplayMetrics metrics){
+    private static String getDensityString(DisplayMetrics metrics){
 
         String metric = "xhdpi/";
 
@@ -55,6 +64,23 @@ public class Utils {
         }
 
         return metric;
+
+    }
+
+    public static void loadPicassoImage(Context context, ImageView imageView, String urlImage){
+
+        if(imageView != null){
+            String URL = ItemContent.URL_IMAGES_BASE + getDensityString(context.getResources().getDisplayMetrics()) + urlImage + ".png";
+            Picasso.with(context).load(URL).placeholder(R.drawable.ic_broken_image_black).into(imageView);
+        }
+
+    }
+
+    public static void openWeb(Context context, String url){
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        context.startActivity(intent);
 
     }
 

@@ -26,12 +26,14 @@
                 android:background="@android:color/transparent"
                 android:text="Cheese Burguer"
                 android:textSize="55sp"
+                android:elevation="1dp"
                 android:layout_gravity="bottom"
                 android:paddingStart="16dp"
                 android:paddingEnd="0dp"
                 android:paddingBottom="10dp"/>
 
             <ImageView
+                android:id="@+id/image_details_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/burger"

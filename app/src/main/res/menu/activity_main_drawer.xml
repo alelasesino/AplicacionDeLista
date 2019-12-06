@@ -6,6 +6,9 @@
     <group
         android:checkableBehavior="none">
             <item
+            android:id="@+id/nav_all"
+            android:title="Mostrar todos los productos" />
+            <item
                 android:id="@+id/nav_burgers"
                 android:title="Hamburguesas" />
             <item
@@ -23,7 +26,7 @@
         <menu>
             <item
                 android:id="@+id/nav_visit"
-                android:title="Visitanos" />
+                android:title="Ver codigo fuente" />
         </menu>
     </item>
 
