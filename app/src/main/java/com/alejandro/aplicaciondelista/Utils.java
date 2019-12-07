@@ -15,10 +15,20 @@ public class Utils {
     public static final String URL_BURGER_KING = "https://www.burgerking.es/carta";
     public static final String OWNER_GITHUB = "https://github.com/alelasesino/AplicacionDeLista";
 
+    /**
+     * Convierte precio en una cadena con el formato de euros
+     * @param price Double con el precio a convertir
+     * @return Cadena con formato del precio
+     */
     public static String toPrice(double price){
         return new DecimalFormat("##,##0.00 €").format(price);
     }
 
+    /**
+     * Convierte la cadena de precio en formato de euros en un double
+     * @param price Cadena con el precio a convertir
+     * @return Double con el precio convertido
+     */
     public static double priceToString(String price){
 
         if(price.equals("")) return 0;
@@ -27,6 +37,11 @@ public class Utils {
 
     }
 
+    /**
+     * Establece el texto en un campo de texto si no es nulo
+     * @param editText Campo de texto
+     * @param text Texto para establecer
+     */
     public static void setText(TextView editText, String text){
 
         if(editText != null)
@@ -34,10 +49,21 @@ public class Utils {
 
     }
 
+    /**
+     * Convierte la primera letra mayuscula y todas las demas minusculas
+     * @param text Texto para capitalizar
+     * @return Texto capitalizado
+     */
     public static String capitalize(String text){
         return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
     }
 
+    /**
+     * Devuelve dependiendo de la densidad de pixeles de dispositivo
+     * la cadena correspondiente a esa densidad de pixeles
+     * @param metrics Densidad de pixeles del dispositivo
+     * @return Cadena con su correpondiente desidad de pixeles
+     */
     private static String getDensityString(DisplayMetrics metrics){
 
         String metric = "xhdpi/";
@@ -67,6 +93,13 @@ public class Utils {
 
     }
 
+    /**
+     * Obtiene de una url la imagen correspondiente a la densidad de pixeles
+     * del dispositivo y la inserta en un image view
+     * @param context Contexto
+     * @param imageView Image view para insertar la imagen
+     * @param urlImage Url de la imagen
+     */
     public static void loadPicassoImage(Context context, ImageView imageView, String urlImage){
 
         if(imageView != null){
@@ -76,6 +109,12 @@ public class Utils {
 
     }
 
+    /**
+     * Abre el navegador predeterminado del dispositivo con la url
+     * recibida por parametro
+     * @param context Contexto
+     * @param url Url para abrir
+     */
     public static void openWeb(Context context, String url){
 
         Intent intent = new Intent(Intent.ACTION_VIEW);

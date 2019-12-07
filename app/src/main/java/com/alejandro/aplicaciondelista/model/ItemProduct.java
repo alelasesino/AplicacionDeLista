@@ -8,6 +8,9 @@ import androidx.annotation.NonNull;
 import java.util.Arrays;
 import java.util.UUID;
 
+/**
+ * Clase modelo con los datos de un producto
+ */
 public class ItemProduct implements Parcelable {
 
     private String id;

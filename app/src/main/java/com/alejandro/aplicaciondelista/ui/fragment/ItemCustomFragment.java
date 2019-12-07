@@ -20,6 +20,9 @@ import com.alejandro.aplicaciondelista.adapters.TagViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+/**
+ * Fragmento encargado de añadir y actualizar productos
+ */
 public class ItemCustomFragment extends Fragment {
 
     public static final String ARG_ITEM = "item_custom";
@@ -58,6 +61,10 @@ public class ItemCustomFragment extends Fragment {
 
     }
 
+    /**
+     * Obtiene el producto creado o actualizado de todos los campos de la vista
+     * @return Producto de los campos de la vista
+     */
     private ItemProduct getItemProductFromFields(){
 
         ItemProduct item = new ItemProduct();

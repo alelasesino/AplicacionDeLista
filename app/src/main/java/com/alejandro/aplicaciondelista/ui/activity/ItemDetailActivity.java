@@ -18,6 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+/**
+ * Clase que controla la activity que muestra los detalles de un producto
+ */
 public class ItemDetailActivity extends AppCompatActivity {
 
     private ItemDetailFragment itemDetailFragment;
@@ -35,6 +38,11 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Recibe los argumentos de la activity por la que fue llamado y lanza el fragmento
+     * dinamico ItemDetailFragment pasandole dichos argumentos
+     * @param savedInstanceState Bundle guardado
+     */
     private void argumentsReceived(Bundle savedInstanceState) {
 
         if (savedInstanceState == null) {
@@ -73,6 +81,10 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Metodo que envia los datos de un producto a un correo
+     * @param itemProduct Producto para enviar
+     */
     private void sendEmail(ItemProduct itemProduct) {
 
         String[] TO = {"random@gmail.com"};
@@ -95,6 +107,10 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Metodo que comparte la informacion de un producto con cualquier aplicacion
+     * @param itemProduct Producto para compartir
+     */
     private void shareItemProduct(ItemProduct itemProduct){
 
         Intent sendIntent = new Intent();
@@ -132,12 +148,9 @@ public class ItemDetailActivity extends AppCompatActivity {
 
             default:
                 itemDetailFragment.closeActivityWithResult();
-                //onBackPressed();
                 return true;
 
         }
-
-        //navigateUpTo(new Intent(this, ItemListActivity.class), options.toBundle());
 
         return super.onOptionsItemSelected(item);
 

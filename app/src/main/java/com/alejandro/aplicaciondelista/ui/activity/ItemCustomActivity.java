@@ -11,6 +11,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.MenuItem;
 
+/**
+ * Clase que controla la activity que permite añadir y actualizar productos
+ */
 public class ItemCustomActivity extends AppCompatActivity {
 
     @Override
@@ -26,6 +29,11 @@ public class ItemCustomActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Metodo que obtiene los argumentos recibido de la activity que fue llamada
+     * y se los manda al fragmento dinamico ItemCustomFragment
+     * @param savedInstanceState Bundle guardado
+     */
     private void argumentsReceived(Bundle savedInstanceState){
 
         if (savedInstanceState == null) {
@@ -61,7 +69,6 @@ public class ItemCustomActivity extends AppCompatActivity {
 
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
-            //navigateUpTo(new Intent(this, ItemListActivity.class), options.toBundle());
             return true;
         }
 

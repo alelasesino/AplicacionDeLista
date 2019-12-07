@@ -25,6 +25,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * Fragmento que muestra los detalles de un producto
+ */
 public class ItemDetailFragment extends Fragment {
 
     public static final String ARG_ITEM = "item_detail";
@@ -127,7 +130,7 @@ public class ItemDetailFragment extends Fragment {
             listener.onChangeFavoriteState(isFavorite);
 
         if(btFavorite != null)
-        btFavorite.setBackgroundResource(isFavorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
+            btFavorite.setBackgroundResource(isFavorite ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
 
     }
 

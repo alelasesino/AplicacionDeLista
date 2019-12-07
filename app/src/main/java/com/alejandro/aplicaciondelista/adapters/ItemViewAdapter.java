@@ -25,12 +25,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Clase adaptador del recycler view que muestra la lista de los productos
+ */
 public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
 
     private final List<ItemProduct> itemListFull;
     private final List<ItemProduct> itemList;
     private ItemCardActionListener cardAction;
+
+    /*Modo de edicion que permite modificar los productos*/
     private boolean editMode;
+
     private Context context;
 
     public ItemViewAdapter(Context context, List<ItemProduct> items, ItemCardActionListener cardAction) {
@@ -183,6 +189,10 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
+    /**
+     * Metodo que filtra los productos por favoritos
+     * @param filter Aplicar filtro
+     */
     public void setFavoriteFilter(boolean filter){
 
         IFilterAdapter favoriteFilter = (item, tags) -> item.isFavorite();
@@ -191,6 +201,12 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
+    /**
+     * Metodo que filtra los productos de la lista mediante
+     * los tags recibidos por parametro
+     * @param filter Aplicar el filtro
+     * @param tagsToFilter Tags que se desean filtrar
+     */
     public void setTagsFilter(boolean filter, String[] tagsToFilter){
 
         IFilterAdapter tagsFilter = (item, tags) -> {
@@ -214,6 +230,11 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
+    /**
+     * @param iFilter Forma de aplicar el filtro
+     * @param filter Aplicar filtro
+     * @param tags Tags para filtrar
+     */
     private void setFilter(IFilterAdapter iFilter, boolean filter, String[] tags){
 
         itemList.clear();
@@ -241,6 +262,10 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
+    /**
+     * Ordena la lista de productos por precio
+     * @param ascendente Ordenar ascendentemente
+     */
     public void orderByPrice(boolean ascendente){
 
         itemList.sort((itemProduct, itemProduct2) -> {
@@ -267,6 +292,9 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
     }
 
+    /**
+     * Interfaz que implementa la forma de filtrar un producto
+     */
     private interface IFilterAdapter{
         boolean filterItem(ItemProduct item, String[] tags);
     }

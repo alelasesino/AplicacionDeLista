@@ -30,7 +30,7 @@ import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
-import com.alejandro.aplicaciondelista.ui.dialog.FilterAlertDialog;
+import com.alejandro.aplicaciondelista.ui.dialog.FilterDialogFragment;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemCustomFragment;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemDetailFragment;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -42,13 +42,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Activity principal de la aplicacion
+ * Clase que controla la Activity principal de la aplicacion que muestra la lista de los productos
  */
 public class ItemListActivity extends AppCompatActivity implements ItemCardActionListener, ItemCustomActionListener {
 
     private static final int CUSTOM_ACTIVITY = 1;
     private static final int DETAILS_ACTIVITY = 2;
+
+    /*Pantalla grande, superior a w900d*/
     private boolean largeScreen;
+
     private RecyclerView recyclerView;
     private ItemViewAdapter itemAdapter;
     private ItemCustomFragment itemCustomFragment;
@@ -74,6 +77,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Inicializa el recycler view que muestra la lista de los productos
+     * @param recyclerView Recycler para inicializar
+     */
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
 
@@ -84,6 +91,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Inicializa todas las acciones de los menus de la barra de navegacion lateral
+     * @param navigationView Navigation para inicializar
+     */
     private void setupNavigationView(NavigationView navigationView){
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
@@ -118,6 +129,9 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Inicializa las acciones de los botones flotantes
+     */
     private void setupFloatingButtons(){
 
         FloatingActionsMenu mainButton = findViewById(R.id.fab_main);
@@ -141,6 +155,9 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Crea un nuevo producto lanzando la actividad o fragmento correspondiente
+     */
     private void createNewItem(){
 
         currentItem = new ItemProduct();
@@ -152,24 +169,36 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Establece al adaptador el modo de edicion
+     * @param editMode Modo de edicion
+     */
     private void setEditModeRecyclerView(boolean editMode){
 
         if(itemAdapter != null && editMode != itemAdapter.getEditMode()) {
 
             itemAdapter.setEditMode(editMode);
-            changeState();
+            removeFragments();
 
         }
 
     }
 
-    private void changeState(){
+    /**
+     * Elimina el fragmentos de los detalles de un producto y
+     * el fragmento de añadir o actualizar un producto
+     */
+    private void removeFragments(){
 
         removeFragment(itemCustomFragment);
         removeFragment(itemDetailFragment);
 
     }
 
+    /**
+     * Elimina el fragmento recibido por parametro
+     * @param fragment Fragmento a borrar
+     */
     private void removeFragment(Fragment fragment){
 
         if(fragment != null)
@@ -179,6 +208,11 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Lanza la activity que permite añadir y actualizar productos
+     * para pantallas no superior a w900dp
+     * @param card Vista de la tarjeta para editar
+     */
     private void launchCustomActivity(View card){
 
 
@@ -203,6 +237,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Lanza el fragmento que permite añadir y actualizar productos
+     * para pantallas superiores a w900dp
+     */
     private void launchCustomFragment(){
 
         Bundle arguments = new Bundle();
@@ -236,6 +274,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Lanza el fragmento que muestra los detalles del producto
+     * para pantallas superiores a w900dp
+     */
     private void launchItemDetailFragment(){
 
         Bundle arguments = new Bundle();
@@ -252,6 +294,11 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Lanza la activity que muestra los detalles del producto
+     * para pantallas no superiores a w900dp
+     * @param card Vista de la tarjeta para mostrar
+     */
     private void launchItemDetailActivity(View card){
 
         ImageView img = card.findViewById(R.id.image_card);
@@ -289,7 +336,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         else
             itemAdapter.updateItem(item);
 
-        changeState();
+        removeFragments();
 
     }
 
@@ -298,7 +345,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         if(currentItem != null)
             if(item.getId().equals(currentItem.getId()))
-                changeState();
+                removeFragments();
 
     }
 
@@ -310,6 +357,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         }
     }
 
+    /**
+     * El recycler view realiza un suave scroll hacia la posicion deseada
+     * @param position Posicion
+     */
     public void doSmoothScroll(int position){
         recyclerView.smoothScrollToPosition(position);
     }
@@ -344,15 +395,18 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Muestra el fragmento de dialogo para filtrar los productos
+     */
     private void showFilterDialogFragment(){
 
         FragmentManager manager = getSupportFragmentManager();
-        FilterAlertDialog dialog = FilterAlertDialog.newInstance("Filtrar productos", this::onFilterAlertAccept);
+        FilterDialogFragment dialog = FilterDialogFragment.newInstance("Filtrar productos", this::onFilterAlertAccept);
         dialog.show(manager, "filter_dialog");
 
     }
 
-    private void onFilterAlertAccept(boolean applyFilter, boolean priceAsc, /*boolean nameAsc,*/ String[] tags){
+    private void onFilterAlertAccept(boolean applyFilter, boolean priceAsc, String[] tags){
 
         if(tags.length > 0)
             itemAdapter.setTagsFilter(applyFilter, tags);
@@ -363,19 +417,25 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    /**
+     * Guarda las preferencias de filtrado del fragmento de dialogo
+     * @param applyFilter Aplicar filtro
+     * @param priceAsc Precio ascendente
+     * @param tags Tags de filtrado
+     */
     private void saveFilterPreferences(boolean applyFilter, boolean priceAsc, String[] tags){
 
-        SharedPreferences prefs = getSharedPreferences(FilterAlertDialog.FILTER_PREFERENCE, Context.MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(FilterDialogFragment.FILTER_PREFERENCE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(FilterAlertDialog.PREF_FILTER, applyFilter);
-        editor.putInt(FilterAlertDialog.PREF_PRICE, priceAsc ? 1 : 0);
+        editor.putBoolean(FilterDialogFragment.PREF_FILTER, applyFilter);
+        editor.putInt(FilterDialogFragment.PREF_PRICE, priceAsc ? 1 : 0);
 
         if(tags != null){
 
             Set<String> tagSet = new HashSet<>();
             Collections.addAll(tagSet, tags);
 
-            editor.putStringSet(FilterAlertDialog.PREF_TAGS, tagSet);
+            editor.putStringSet(FilterDialogFragment.PREF_TAGS, tagSet);
 
         }
 

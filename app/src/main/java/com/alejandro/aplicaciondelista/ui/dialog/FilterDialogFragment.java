@@ -27,7 +27,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class FilterAlertDialog extends DialogFragment {
+/**
+ * Fragmento de dialogo que permite seleccinar las opciones de filtrado de productos
+ */
+public class FilterDialogFragment extends DialogFragment {
 
     public static final String FILTER_PREFERENCE = "filter_options";
     public static final String PREF_FILTER = "filter_switch";
@@ -36,14 +39,14 @@ public class FilterAlertDialog extends DialogFragment {
 
     private Activity activity;
     private Switch switchFilter;
-    private Spinner spinnerPrice /*spinnerName*/;
+    private Spinner spinnerPrice;
     private EditText txtTag;
     private TagViewAdapter tagAdapter;
     private IFilterAlertDialog listener;
 
-    public static FilterAlertDialog newInstance(String title, IFilterAlertDialog listener) {
+    public static FilterDialogFragment newInstance(String title, IFilterAlertDialog listener) {
 
-        FilterAlertDialog frag = new FilterAlertDialog(listener);
+        FilterDialogFragment frag = new FilterDialogFragment(listener);
         Bundle args = new Bundle();
         args.putString("title", title);
         frag.setArguments(args);
@@ -52,9 +55,9 @@ public class FilterAlertDialog extends DialogFragment {
 
     }
 
-    public FilterAlertDialog(){}
+    public FilterDialogFragment(){}
 
-    private FilterAlertDialog(IFilterAlertDialog listener){
+    private FilterDialogFragment(IFilterAlertDialog listener){
         this.listener = listener;
     }
 
@@ -74,7 +77,6 @@ public class FilterAlertDialog extends DialogFragment {
 
         switchFilter = rootView.findViewById(R.id.switch_filter);
         spinnerPrice = rootView.findViewById(R.id.spinner_precio);
-        //spinnerName = rootView.findViewById(R.id.spinner_nombre);
         Button btAccept = rootView.findViewById(R.id.bt_aceptar);
         Button btCancel = rootView.findViewById(R.id.bt_cancelar);
         Button btAddTag = rootView.findViewById(R.id.bt_add_tag);
@@ -100,9 +102,8 @@ public class FilterAlertDialog extends DialogFragment {
         btAccept.setOnClickListener(view -> {
 
             boolean priceAsc = spinnerPrice.getSelectedItemPosition() == 1; //BARATO A CARO SELECCIONADO
-            //boolean nameAsc = spinnerName.getSelectedItemPosition() == 0;
 
-            listener.onFilterAlertAccept(switchFilter.isChecked(), priceAsc, tagAdapter.getTags());
+            listener.onFilterDialogAccept(switchFilter.isChecked(), priceAsc, tagAdapter.getTags());
 
             dismiss();
 
@@ -112,6 +113,10 @@ public class FilterAlertDialog extends DialogFragment {
 
     }
 
+    /**
+     * Establece los datos iniciales de los componentes,
+     * obteniendolos de las preferencias
+     */
     private void bindDataViews(){
 
         activity = getActivity();
@@ -122,7 +127,6 @@ public class FilterAlertDialog extends DialogFragment {
 
             ArrayAdapter<String> orderAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_list_item_1, Arrays.asList(orderBy));
             spinnerPrice.setAdapter(orderAdapter);
-            //spinnerName.setAdapter(orderAdapter);
 
             recoverFilterPreferences();
 
@@ -130,6 +134,9 @@ public class FilterAlertDialog extends DialogFragment {
 
     }
 
+    /**
+     * Recupera las preferencias de filtrado de los productos
+     */
     private void recoverFilterPreferences(){
 
         SharedPreferences pref = activity.getSharedPreferences(FILTER_PREFERENCE, Context.MODE_PRIVATE);
@@ -149,7 +156,14 @@ public class FilterAlertDialog extends DialogFragment {
     }
 
     public interface IFilterAlertDialog{
-        void onFilterAlertAccept(boolean applyFilter, boolean priceAsc, /*boolean nameAsc,*/ String[] tags);
+
+        /**
+         * Evento al aceptar el dialogo de filtrado
+         * @param applyFilter Aplicar filtro
+         * @param priceAsc Precio ascendente
+         * @param tags Tags para filtrar
+         */
+        void onFilterDialogAccept(boolean applyFilter, boolean priceAsc, String[] tags);
     }
 
 }

@@ -18,6 +18,9 @@ import com.alejandro.aplicaciondelista.R;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Clase adaptador para los recycler view que contienen los tags de los productos
+ */
 public class TagViewAdapter extends RecyclerView.Adapter<TagViewAdapter.TagViewHolder> {
 
     private final ArrayList<String> tagList;
