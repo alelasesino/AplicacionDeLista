@@ -18,6 +18,7 @@ import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.TagViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
+import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
@@ -35,6 +36,8 @@ public class ItemCustomFragment extends Fragment {
     private ItemProduct currentItem;
     private ItemCustomActionListener customActionListener;
 
+    private boolean largeScreen;
+
     public ItemCustomFragment(){}
 
     public ItemCustomFragment(ItemCustomActionListener customActionListener) {
@@ -46,6 +49,10 @@ public class ItemCustomFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         this.activity = getActivity();
+
+        /*Si la activity que contiene este fragment es la activity que muestra la lista de productos
+         * significa que la pantalla es superior a w900dp*/
+        largeScreen = activity instanceof ItemListActivity;
 
         argumentsReceived();
 
@@ -83,25 +90,28 @@ public class ItemCustomFragment extends Fragment {
 
     private void initializeComponents(View fragmentView){
 
-        headerImageView = fragmentView.findViewById(R.id.custom_image_header);
-        txtName = fragmentView.findViewById(R.id.txt_name);
+        Button btAddTag;
+        FloatingActionButton btSave;
+
         txtDetails = fragmentView.findViewById(R.id.txt_details);
-        txtPrice = fragmentView.findViewById(R.id.txt_price);
+        btAddTag = fragmentView.findViewById(R.id.bt_add_tag);
         txtTag = fragmentView.findViewById(R.id.txt_tag);
-        Button btAddTag = fragmentView.findViewById(R.id.bt_add_tag);
-        FloatingActionButton btSave = fragmentView.findViewById(R.id.fab_save_item);
 
-        if(headerImageView == null)
+        if(largeScreen){
+
+            headerImageView = fragmentView.findViewById(R.id.custom_image_header);
+            txtName = fragmentView.findViewById(R.id.txt_name);
+            txtPrice = fragmentView.findViewById(R.id.txt_price);
+            btSave = fragmentView.findViewById(R.id.fab_save_item);
+
+        } else {
+
             headerImageView = activity.findViewById(R.id.custom_image_header);
-
-        if(txtName == null)
             txtName = activity.findViewById(R.id.txt_name);
-
-        if(txtPrice == null)
             txtPrice = activity.findViewById(R.id.txt_price);
-
-        if(btSave == null)
             btSave = activity.findViewById(R.id.fab_save_item);
+
+        }
 
         RecyclerView tagRecycler = fragmentView.findViewById(R.id.tags_recycler);
 
@@ -121,7 +131,7 @@ public class ItemCustomFragment extends Fragment {
         if(btAddTag != null)
             btAddTag.setOnClickListener(view -> {
 
-                if(!txtTag.getText().toString().equals("")){//TODO REFACTORIZAR
+                if(!txtTag.getText().toString().equals("")){
 
                     tagAdapter.addItem(Utils.capitalize(txtTag.getText().toString()));
                     txtTag.setText("");

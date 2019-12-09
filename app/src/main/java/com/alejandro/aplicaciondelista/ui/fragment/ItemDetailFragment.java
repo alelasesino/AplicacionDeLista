@@ -10,6 +10,7 @@ import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.TagViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
+import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -38,9 +39,10 @@ public class ItemDetailFragment extends Fragment {
 
     private ImageView imageDetailsHeader;
     private Button btFavorite;
-    private TextView tvPrice;
-    private TextView tvDetails;
+    private TextView tvPrice, tvDetails, tvName;
     private ItemCardActionListener listener;
+
+    private boolean largeScreen;
 
     public ItemDetailFragment() {
     }
@@ -54,6 +56,10 @@ public class ItemDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         this.activity = getActivity();
+
+        /*Si la activity que contiene este fragment es la activity que muestra la lista de productos
+        * significa que la pantalla es superior a w900dp*/
+        largeScreen = activity instanceof ItemListActivity;
 
         argumentsReceived();
         initializeToolbar();
@@ -77,27 +83,28 @@ public class ItemDetailFragment extends Fragment {
 
     }
 
-    private void initializeComponents(View fragmentView){ //TODO CREAR UN ESTADO EVITAR LOS == NULL
+    private void initializeComponents(View fragmentView){
 
-        imageDetailsHeader = fragmentView.findViewById(R.id.image_details_header);
-        tvPrice = fragmentView.findViewById(R.id.tv_price);
+        FloatingActionButton fabWebDetails;
+
         tvDetails = fragmentView.findViewById(R.id.tv_details);
-        FloatingActionButton fabWebDetails = fragmentView.findViewById(R.id.fab_web_details);
-        btFavorite = fragmentView.findViewById(R.id.bt_favorite);
 
-        if(imageDetailsHeader == null)
+        if(largeScreen){
+
+            tvName = fragmentView.findViewById(R.id.tv_name);
+            imageDetailsHeader = fragmentView.findViewById(R.id.image_details_header);
+            tvPrice = fragmentView.findViewById(R.id.tv_price);
+            fabWebDetails = fragmentView.findViewById(R.id.fab_web_details);
+            btFavorite = fragmentView.findViewById(R.id.bt_favorite);
+
+        } else {
+
             imageDetailsHeader = activity.findViewById(R.id.image_details_header);
-
-        if(btFavorite == null)
+            tvPrice = activity.findViewById(R.id.tv_price);
+            fabWebDetails = activity.findViewById(R.id.fab_web_details);
             btFavorite = activity.findViewById(R.id.bt_favorite);
 
-        if(tvPrice == null)
-            tvPrice = activity.findViewById(R.id.tv_price);
-        else
-            ((TextView)fragmentView.findViewById(R.id.tv_name)).setText(currentItem.getName());
-
-        if(fabWebDetails == null)
-            fabWebDetails = activity.findViewById(R.id.fab_web_details);
+        }
 
         if(fabWebDetails != null)
             fabWebDetails.setOnClickListener(view -> Utils.openWeb(activity, Utils.URL_BURGER_KING));
@@ -115,6 +122,7 @@ public class ItemDetailFragment extends Fragment {
     private void bindDataProducts(){
 
         Utils.loadPicassoImage(activity, imageDetailsHeader, currentItem.getImageUrl());
+        Utils.setText(tvName, currentItem.getName());
         Utils.setText(tvDetails, currentItem.getDetails());
         Utils.setText(tvPrice, Utils.toPrice(currentItem.getPrice()));
 

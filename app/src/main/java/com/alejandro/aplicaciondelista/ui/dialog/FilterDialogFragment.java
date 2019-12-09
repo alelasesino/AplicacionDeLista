@@ -73,6 +73,10 @@ public class FilterDialogFragment extends DialogFragment {
 
     }
 
+    /**
+     * Inicializa los componentes de la vista
+     * @param rootView Vista
+     */
     private void initializeComponents(View rootView){
 
         switchFilter = rootView.findViewById(R.id.switch_filter);
@@ -88,7 +92,7 @@ public class FilterDialogFragment extends DialogFragment {
 
         btAddTag.setOnClickListener(view -> {
 
-            if(!txtTag.getText().toString().equals("")){//TODO REFACTORIZAR
+            if(!txtTag.getText().toString().equals("")){
 
                 tagAdapter.addItem(Utils.capitalize(txtTag.getText().toString()));
                 txtTag.setText("");
