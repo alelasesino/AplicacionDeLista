@@ -63,6 +63,9 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Inicializa el actionbar del home
+     */
     private void setHomeButtonActionBar(){
 
         ActionBar actionBar = getSupportActionBar();
@@ -75,6 +78,9 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Abre la pagina web
+     */
     public void openWebDetails(){
 
         Utils.openWeb(this,Utils.URL_BURGER_KING);

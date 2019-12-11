@@ -51,6 +51,9 @@ public class ItemCustomActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Inicializa el actionbar del home
+     */
     private void setHomeButtonActionBar(){
 
         ActionBar actionBar = getSupportActionBar();
