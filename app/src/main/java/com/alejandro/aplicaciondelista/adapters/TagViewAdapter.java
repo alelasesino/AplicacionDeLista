@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alejandro.aplicaciondelista.R;
+import com.alejandro.aplicaciondelista.model.Tag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,10 +24,10 @@ import java.util.Arrays;
  */
 public class TagViewAdapter extends RecyclerView.Adapter<TagViewAdapter.TagViewHolder> {
 
-    private final ArrayList<String> tagList;
+    private final ArrayList<Tag> tagList;
     private boolean allowEdit;
 
-    public TagViewAdapter(String[] tags, boolean allowEdit) {
+    public TagViewAdapter(Tag[] tags, boolean allowEdit) {
         this.allowEdit = allowEdit;
 
         if(tags != null)
@@ -103,8 +104,8 @@ public class TagViewAdapter extends RecyclerView.Adapter<TagViewAdapter.TagViewH
 
     }
 
-    public String[] getTags(){
-        return tagList.toArray(new String[0]);
+    public Tag[] getTags(){
+        return tagList.toArray(new Tag[0]);
     }
 
     private void removeItem(View view, int position){
@@ -112,7 +113,7 @@ public class TagViewAdapter extends RecyclerView.Adapter<TagViewAdapter.TagViewH
     }
 
     public void addItem(String tag){
-        tagList.add(tag);
+        tagList.add(new Tag(tag));
         notifyItemInserted(tagList.size()-1);
     }
 
@@ -138,10 +139,10 @@ public class TagViewAdapter extends RecyclerView.Adapter<TagViewAdapter.TagViewH
 
         }
 
-        void bind(String tag){
+        void bind(Tag tag){
 
             removeTag.setVisibility(allowEdit ? View.VISIBLE : View.GONE);
-            tvTag.setText(tag);
+            tvTag.setText(tag.getTag());
 
         }
 

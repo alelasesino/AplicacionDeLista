@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.TagViewAdapter;
+import com.alejandro.aplicaciondelista.model.Tag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -167,7 +168,7 @@ public class FilterDialogFragment extends DialogFragment {
          * @param priceAsc Precio ascendente
          * @param tags Tags para filtrar
          */
-        void onFilterDialogAccept(boolean applyFilter, boolean priceAsc, String[] tags);
+        void onFilterDialogAccept(boolean applyFilter, boolean priceAsc, Tag[] tags);
     }
 
 }

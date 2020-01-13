@@ -29,6 +29,7 @@ import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
+import com.alejandro.aplicaciondelista.model.Tag;
 import com.alejandro.aplicaciondelista.model.db.ProductSQLiteHelper;
 import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
 import com.alejandro.aplicaciondelista.ui.dialog.FilterDialogFragment;
@@ -90,7 +91,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
 
-        itemAdapter = new ItemViewAdapter(this, ItemContent.ITEMS, this);
+        itemAdapter = new ItemViewAdapter(this, ItemContent.ITEMS, this, productHelper);
 
         recyclerView.setAdapter(itemAdapter);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, largeScreen));
@@ -110,16 +111,16 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
                     itemAdapter.setTagsFilter(false, null);
                     break;
                 case R.id.nav_burgers:
-                    itemAdapter.setTagsFilter(true, new String[]{"Burger"});
+                    itemAdapter.setTagsFilter(true, new Tag[]{new Tag("Burger")});
                     break;
                 case R.id.nav_bebidas:
-                    itemAdapter.setTagsFilter(true, new String[]{"Bebida"});
+                    itemAdapter.setTagsFilter(true, new Tag[]{new Tag("Bebida")});
                     break;
                 case R.id.nav_postres:
-                    itemAdapter.setTagsFilter(true, new String[]{"Postre"});
+                    itemAdapter.setTagsFilter(true, new Tag[]{new Tag("Postre")});
                     break;
                 case R.id.nav_salsas:
-                    itemAdapter.setTagsFilter(true, new String[]{"Salsa"});
+                    itemAdapter.setTagsFilter(true, new Tag[]{new Tag("Salsa")});
                     break;
                 case R.id.nav_visit:
                     Utils.openWeb(this, Utils.OWNER_GITHUB);
@@ -412,7 +413,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
-    private void onFilterAlertAccept(boolean applyFilter, boolean priceAsc, String[] tags){
+    private void onFilterAlertAccept(boolean applyFilter, boolean priceAsc, Tag[] tags){
 
         if(tags.length > 0)
             itemAdapter.setTagsFilter(applyFilter, tags);
@@ -429,7 +430,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
      * @param priceAsc Precio ascendente
      * @param tags Tags de filtrado
      */
-    private void saveFilterPreferences(boolean applyFilter, boolean priceAsc, String[] tags){
+    private void saveFilterPreferences(boolean applyFilter, boolean priceAsc, Tag[] tags){
 
         SharedPreferences prefs = getSharedPreferences(FilterDialogFragment.FILTER_PREFERENCE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -438,8 +439,13 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         if(tags != null){
 
+            String[] str_tags = new String[tags.length];
+
+            for(int i = 0; i<tags.length; i++)
+                str_tags[i] = tags[i].getTag();
+
             Set<String> tagSet = new HashSet<>();
-            Collections.addAll(tagSet, tags);
+            Collections.addAll(tagSet, str_tags);
 
             editor.putStringSet(FilterDialogFragment.PREF_TAGS, tagSet);
 

@@ -27,7 +27,7 @@ public class ProductSQLiteHelper extends SQLiteOpenHelper {
             "id_product TEXT, " +
             "id_tag TEXT, " +
             "FOREIGN KEY (id_product) REFERENCES Product(id) ON DELETE CASCADE, " +
-            "FOREIGN KEY (id_tag) REFERENCES Tag(id) ON DELETE CASCADE" +
+            "FOREIGN KEY (id_tag) REFERENCES Tag(id)" +
             ")";
 
     public ProductSQLiteHelper(Context contexto, String nombre, CursorFactory factory, int version) {
@@ -36,6 +36,7 @@ public class ProductSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         db.execSQL(productTable);
         db.execSQL(tagTable);
         db.execSQL(productTagTable);
@@ -46,6 +47,7 @@ public class ProductSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+
         db.execSQL("DROP TABLE IF EXISTS Product");
         db.execSQL("DROP TABLE IF EXISTS Tag");
         db.execSQL("DROP TABLE IF EXISTS ProductTag");

@@ -18,21 +18,39 @@ public class ItemProduct implements Parcelable {
     private String name;
     private String details;
     private double price;
-    private String[] tags;
+    //private String[] tags;
+    private Tag[] tags;
     private boolean favorite;
 
     public ItemProduct(){
         id = UUID.randomUUID().toString();
     }
 
-    private ItemProduct(Parcel in) {
+
+    protected ItemProduct(Parcel in) {
         id = in.readString();
         imageUrl = in.readString();
         name = in.readString();
         details = in.readString();
         price = in.readDouble();
-        tags = in.createStringArray();
+        tags = in.createTypedArray(Tag.CREATOR);
         favorite = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(imageUrl);
+        dest.writeString(name);
+        dest.writeString(details);
+        dest.writeDouble(price);
+        dest.writeTypedArray(tags, flags);
+        dest.writeByte((byte) (favorite ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<ItemProduct> CREATOR = new Creator<ItemProduct>() {
@@ -46,22 +64,6 @@ public class ItemProduct implements Parcelable {
             return new ItemProduct[size];
         }
     };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(id);
-        parcel.writeString(imageUrl);
-        parcel.writeString(name);
-        parcel.writeString(details);
-        parcel.writeDouble(price);
-        parcel.writeStringArray(tags);
-        parcel.writeByte((byte) (favorite ? 1 : 0));
-    }
 
     public String getId() {
         return id;
@@ -103,11 +105,11 @@ public class ItemProduct implements Parcelable {
         this.price = price;
     }
 
-    public String[] getTags() {
+    public Tag[] getTags() {
         return tags;
     }
 
-    public void setTags(String[] tags) {
+    public void setTags(Tag[] tags) {
         this.tags = tags;
     }
 

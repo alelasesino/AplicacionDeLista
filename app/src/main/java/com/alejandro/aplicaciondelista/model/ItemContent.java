@@ -27,7 +27,8 @@ public class ItemContent {
     private static final String URL_API_REST_BASE = "https://api-rest-android.herokuapp.com/";
     private static final String URL_PRODUCTS = "products";
 
-    private static final int TAG = 0;
+    private static final int ID_TAG = 0;
+    private static final int TAG = 1;
     private static final int ID_PRODUCT = 0;
     private static final int IMAGE_URL_PRODUCT = 1;
     private static final int NAME_PRODUCT = 2;
@@ -71,7 +72,7 @@ public class ItemContent {
                 itemProduct.setImageUrl(producto.getString("imagen"));
                 itemProduct.setName(producto.getString("nombre"));
                 itemProduct.setPrice(producto.getDouble("precio"));
-                itemProduct.setTags(getItemTags(producto.getJSONArray("tags")));
+                //itemProduct.setTags(getItemTags(producto.getJSONArray("tags")));
 
                 ITEMS.add(itemProduct);
 
@@ -127,26 +128,26 @@ public class ItemContent {
 
     }
 
-    private static String[] getItemTags(SQLiteDatabase db, int id_product) {
+    private static Tag[] getItemTags(SQLiteDatabase db, int id_product) {
 
         String[] args = new String[] {String.valueOf(id_product)};
 
-        Cursor tag_cursor = db.rawQuery("SELECT tag FROM Tag WHERE id IN (SELECT id_tag FROM ProductTag WHERE id_product = ?)", args);
+        Cursor tag_cursor = db.rawQuery("SELECT id, tag FROM Tag WHERE id IN (SELECT id_tag FROM ProductTag WHERE id_product = ?)", args);
 
-        ArrayList<String> tags = new ArrayList<>();
+        ArrayList<Tag> tags = new ArrayList<>();
 
 
         if (tag_cursor.moveToFirst()) {
 
             do {
-                tags.add(tag_cursor.getString(TAG));
+                tags.add(new Tag(tag_cursor.getInt(ID_TAG), tag_cursor.getString(TAG)));
             } while (tag_cursor.moveToNext());
 
         }
 
         tag_cursor.close();
 
-        return tags.toArray(new String[0]);
+        return tags.toArray(new Tag[0]);
 
     }
 

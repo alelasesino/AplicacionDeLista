@@ -1,5 +1,6 @@
 package com.alejandro.aplicaciondelista.adapters;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +20,12 @@ import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.R;
+import com.alejandro.aplicaciondelista.model.Tag;
+import com.alejandro.aplicaciondelista.model.db.ProductDao;
+import com.alejandro.aplicaciondelista.model.db.ProductSQLiteHelper;
 import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,15 +36,18 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
     private final List<ItemProduct> itemListFull;
     private final List<ItemProduct> itemList;
     private ItemCardActionListener cardAction;
+    private ProductSQLiteHelper productHelper;
 
     /*Modo de edicion que permite modificar los productos*/
     private boolean editMode;
 
     private Context context;
 
-    public ItemViewAdapter(Context context, List<ItemProduct> items, ItemCardActionListener cardAction) {
+    public ItemViewAdapter(Context context, List<ItemProduct> items, ItemCardActionListener cardAction, ProductSQLiteHelper productHelper) {
         this.context = context;
         this.cardAction = cardAction;
+        this.productHelper = productHelper;
+
         itemList = items;
         itemListFull = new ArrayList<>(items);
     }
@@ -102,9 +108,13 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
             @Override
             public void onAnimationEnd(Animation animation) {
+
+                String id = itemList.get(position).getId();
+
                 itemList.remove(position);
                 itemListFull.remove(position);
                 notifyItemRemoved(position);
+                ProductDao.delete(productHelper.getWritableDatabase(), id);
             }
 
             @Override
@@ -130,10 +140,12 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
     }
 
     public void addItem(ItemProduct item){
+
         itemList.add(item);
         itemListFull.add(item);
         ((ItemListActivity)context).doSmoothScroll(getItemCount());
         notifyItemInserted(getItemCount());
+        ProductDao.insert(productHelper.getWritableDatabase(), item);
 
     }
 
@@ -207,19 +219,28 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
      * @param filter Aplicar el filtro
      * @param tagsToFilter Tags que se desean filtrar
      */
-    public void setTagsFilter(boolean filter, String[] tagsToFilter){
+    public void setTagsFilter(boolean filter, Tag[] tagsToFilter){
 
         IFilterAdapter tagsFilter = (item, tags) -> {
 
-            for(String tag: tags) {
+            for(Tag tag: tags) {
 
-                String[] itemTags = item.getTags();
+                Tag[] itemTags = item.getTags();
 
-                if(itemTags != null && tag != null)
+                if(itemTags != null && tag != null) {
 
-                    if(Arrays.asList(itemTags).contains(tag)) {
-                        return true;
+                    for(Tag t : itemTags){
+
+                        if(t.getTag().equals(tag.getTag())) {
+                            return true;
+                        }
+
                     }
+
+                    return false;
+
+                }
+
             }
 
             return false;
@@ -235,7 +256,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
      * @param filter Aplicar filtro
      * @param tags Tags para filtrar
      */
-    private void setFilter(IFilterAdapter iFilter, boolean filter, String[] tags){
+    private void setFilter(IFilterAdapter iFilter, boolean filter, Tag[] tags){
 
         itemList.clear();
 
@@ -296,7 +317,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
      * Interfaz que implementa la forma de filtrar un producto
      */
     private interface IFilterAdapter{
-        boolean filterItem(ItemProduct item, String[] tags);
+        boolean filterItem(ItemProduct item, Tag[] tags);
     }
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
