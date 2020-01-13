@@ -29,6 +29,7 @@ import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
+import com.alejandro.aplicaciondelista.model.db.ProductSQLiteHelper;
 import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
 import com.alejandro.aplicaciondelista.ui.dialog.FilterDialogFragment;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemCustomFragment;
@@ -57,13 +58,18 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private ItemCustomFragment itemCustomFragment;
     private ItemDetailFragment itemDetailFragment;
     private ItemProduct currentItem;
+    private ProductSQLiteHelper productHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        ItemContent.loadItemsApiRest(this, () -> setupRecyclerView(findViewById(R.id.item_list)));
+        //ItemContent.loadItemsApiRest(this, () -> setupRecyclerView(findViewById(R.id.item_list)));
+
+        productHelper = new ProductSQLiteHelper(this, "ProductsDB", null, 1);
+
+        ItemContent.loadItemsSQLite(productHelper, () -> setupRecyclerView(findViewById(R.id.item_list)));
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
