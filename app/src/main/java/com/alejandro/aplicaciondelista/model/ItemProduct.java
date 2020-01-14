@@ -13,6 +13,13 @@ import java.util.UUID;
  */
 public class ItemProduct implements Parcelable {
 
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_IMAGE_URL = "imageUrl";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_DETAILS = "details";
+    public static final String COLUMN_PRICE = "price";
+    public static final String COLUMN_FAVORITE = "favorite";
+
     private String id;
     private String imageUrl;
     private String name;

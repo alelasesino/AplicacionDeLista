@@ -75,7 +75,6 @@ public class ItemDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-
     }
 
     /**

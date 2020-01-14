@@ -1,11 +1,15 @@
 package com.alejandro.aplicaciondelista.ui.activity;
 
 import android.app.ActivityOptions;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.transition.Fade;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,18 +63,17 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private ItemCustomFragment itemCustomFragment;
     private ItemDetailFragment itemDetailFragment;
     private ItemProduct currentItem;
-    private ProductSQLiteHelper productHelper;
+    private SQLiteDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        //ItemContent.loadItemsApiRest(this, () -> setupRecyclerView(findViewById(R.id.item_list)));
+        ProductSQLiteHelper productHelper = new ProductSQLiteHelper(this, "ProductsDB", null, 1);
+        database = productHelper.getWritableDatabase();
 
-        productHelper = new ProductSQLiteHelper(this, "ProductsDB", null, 1);
-
-        ItemContent.loadItemsSQLite(productHelper, () -> setupRecyclerView(findViewById(R.id.item_list)));
+        //ItemContent.loadItemsSQLite(productHelper, () -> setupRecyclerView(findViewById(R.id.item_list)));
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,7 +82,8 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         if (findViewById(R.id.item_detail_container) != null) //large-screen layouts (res/values-w900dp)
             largeScreen = true;
 
-        setupNavigationView(findViewById(R.id.nav_view));
+        //setupNavigationView(findViewById(R.id.nav_view));
+        setupRecyclerView(findViewById(R.id.item_list));
         setupFloatingButtons();
 
     }
@@ -91,10 +95,59 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
 
-        itemAdapter = new ItemViewAdapter(this, ItemContent.ITEMS, this, productHelper);
+        itemAdapter = new ItemViewAdapter(this, this, getAllProducts());
 
         recyclerView.setAdapter(itemAdapter);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, largeScreen));
+
+    }
+
+    private Cursor getAllProducts(){
+        return database.query("Product", new String[]{"*"}, null, null, null, null, null);
+    }
+
+    private void insertItem(ItemProduct item){
+
+        ContentValues cv = getItemContentValues(item);
+        database.insert("Product", null, cv);
+        itemAdapter.changeCursor(getAllProducts());
+
+    }
+
+    private void updateItem(ItemProduct item){
+
+        ContentValues cv = getItemContentValues(item);
+        database.update("Product", cv, ItemProduct.COLUMN_ID + " = ?", new String[]{item.getId()});
+        itemAdapter.changeCursor(getAllProducts());
+
+    }
+
+    private void removeItem(String id){
+
+        database.delete("Product", ItemProduct.COLUMN_ID + " = ?", new String[]{id});
+        itemAdapter.changeCursor(getAllProducts());
+
+    }
+
+    private void updateFavoriteItem(String id, boolean isFavorite){
+
+        ContentValues cv = new ContentValues();
+        cv.put(ItemProduct.COLUMN_FAVORITE, isFavorite ? 1 : 0);
+        database.update("Product", cv, ItemProduct.COLUMN_ID + " = ?", new String[]{id});
+        itemAdapter.changeCursor(getAllProducts());
+
+    }
+
+    private ContentValues getItemContentValues(ItemProduct item) {
+
+        ContentValues cv = new ContentValues();
+        cv.put(ItemProduct.COLUMN_IMAGE_URL, item.getImageUrl());
+        cv.put(ItemProduct.COLUMN_NAME, item.getName());
+        cv.put(ItemProduct.COLUMN_DETAILS, item.getDetails());
+        cv.put(ItemProduct.COLUMN_PRICE, item.getPrice());
+        cv.put(ItemProduct.COLUMN_FAVORITE, item.isFavorite() ? 1 : 0);
+
+        return cv;
 
     }
 
@@ -102,7 +155,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
      * Inicializa todas las acciones de los menus de la barra de navegacion lateral
      * @param navigationView Navigation para inicializar
      */
-    private void setupNavigationView(NavigationView navigationView){
+    /*private void setupNavigationView(NavigationView navigationView){
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
 
@@ -134,7 +187,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         });
 
-    }
+    }*/
 
     /**
      * Inicializa las acciones de los botones flotantes
@@ -339,9 +392,9 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     public void onSaveItemCustom(ItemProduct item) {
 
         if(!itemAdapter.getEditMode())
-            itemAdapter.addItem(item);
+            insertItem(item);
         else
-            itemAdapter.updateItem(item);
+            updateItem(item);
 
         removeFragments();
 
@@ -354,14 +407,18 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
             if(item.getId().equals(currentItem.getId()))
                 removeFragments();
 
+        removeItem(item.getId());
+
     }
 
     @Override
     public void onChangeFavoriteState(boolean isFavorite) {
+
         if(currentItem != null){
             currentItem.setFavorite(isFavorite);
-            itemAdapter.updateFavoriteState(currentItem);
+            updateFavoriteItem(currentItem.getId(), isFavorite);
         }
+
     }
 
     /**
@@ -398,7 +455,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private void setFavoriteMode(MenuItem menu){
 
         menu.setChecked(!menu.isChecked());
-        itemAdapter.setFavoriteFilter(menu.isChecked());
+        //itemAdapter.setFavoriteFilter(menu.isChecked());
 
     }
 
@@ -415,10 +472,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     private void onFilterAlertAccept(boolean applyFilter, boolean priceAsc, Tag[] tags){
 
-        if(tags.length > 0)
+        /*if(tags.length > 0)
             itemAdapter.setTagsFilter(applyFilter, tags);
 
-        itemAdapter.orderByPrice(priceAsc);
+        itemAdapter.orderByPrice(priceAsc);*/
 
         saveFilterPreferences(applyFilter, priceAsc, tags);
 

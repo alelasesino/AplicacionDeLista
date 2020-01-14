@@ -1,7 +1,8 @@
 package com.alejandro.aplicaciondelista.adapters;
 
-import android.content.ClipData;
 import android.content.Context;
+import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,35 +22,24 @@ import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.model.Tag;
-import com.alejandro.aplicaciondelista.model.db.ProductDao;
-import com.alejandro.aplicaciondelista.model.db.ProductSQLiteHelper;
-import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Clase adaptador del recycler view que muestra la lista de los productos
  */
-public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemViewHolder> {
+public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.ItemViewHolder> {
 
-    private final List<ItemProduct> itemListFull;
-    private final List<ItemProduct> itemList;
     private ItemCardActionListener cardAction;
-    private ProductSQLiteHelper productHelper;
 
     /*Modo de edicion que permite modificar los productos*/
     private boolean editMode;
 
     private Context context;
 
-    public ItemViewAdapter(Context context, List<ItemProduct> items, ItemCardActionListener cardAction, ProductSQLiteHelper productHelper) {
+    public ItemViewAdapter(Context context, ItemCardActionListener cardAction, Cursor cursor) {
+        super(context, cursor);
+
         this.context = context;
         this.cardAction = cardAction;
-        this.productHelper = productHelper;
 
-        itemList = items;
-        itemListFull = new ArrayList<>(items);
     }
 
     @NonNull
@@ -64,15 +54,33 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
     }
 
     @Override
-    public void onBindViewHolder(final ItemViewHolder holder, int position) {
+    public void onBindViewHolder(ItemViewHolder viewHolder, Cursor cursor, int position) {
 
-        holder.bind(itemList.get(position));
+        ItemProduct item = getItemFromCursor(position);
+
+        if(item != null)
+            viewHolder.bind(item);
 
     }
 
-    @Override
-    public int getItemCount() {
-        return itemList.size();
+    private ItemProduct getItemFromCursor(int position){
+
+        Cursor cursor = getCursor();
+
+        if(!cursor.moveToPosition(position)){
+            return null;
+        }
+
+        ItemProduct item = new ItemProduct();
+        item.setId(cursor.getString(cursor.getColumnIndex(ItemProduct.COLUMN_ID)));
+        item.setImageUrl(cursor.getString(cursor.getColumnIndex(ItemProduct.COLUMN_IMAGE_URL)));
+        item.setName(cursor.getString(cursor.getColumnIndex(ItemProduct.COLUMN_NAME)));
+        item.setDetails(cursor.getString(cursor.getColumnIndex(ItemProduct.COLUMN_DETAILS)));
+        item.setPrice(cursor.getDouble(cursor.getColumnIndex(ItemProduct.COLUMN_PRICE)));
+        item.setFavorite(cursor.getInt(cursor.getColumnIndex(ItemProduct.COLUMN_FAVORITE)) == 1);
+
+        return item;
+
     }
 
     @Override
@@ -108,13 +116,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
             @Override
             public void onAnimationEnd(Animation animation) {
-
-                String id = itemList.get(position).getId();
-
-                itemList.remove(position);
-                itemListFull.remove(position);
-                notifyItemRemoved(position);
-                ProductDao.delete(productHelper.getWritableDatabase(), id);
+                cardAction.onCardItemRemoved(view, getItemFromCursor(position));
             }
 
             @Override
@@ -135,11 +137,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         return editMode;
     }
 
-    private void removeItem(View view, int position){
-        animateItemDelete(view, position);
-    }
-
-    public void addItem(ItemProduct item){
+    /*public void addItem(ItemProduct item){
 
         itemList.add(item);
         itemListFull.add(item);
@@ -147,22 +145,22 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         notifyItemInserted(getItemCount());
         ProductDao.insert(productHelper.getWritableDatabase(), item);
 
-    }
+    }*/
 
-    public void updateItem(ItemProduct item){
+    /*public void updateItem(ItemProduct item){
 
         int position = getItemById(item.getId());
 
         if(position != -1){
 
-            ItemProduct itemProduct = itemList.get(position);
+            ItemProduct itemProduct = getItemFromCursor(position);
             itemProduct.setName(item.getName());
             itemProduct.setTags(item.getTags());
             itemProduct.setPrice(item.getPrice());
             itemProduct.setDetails(item.getDetails());
             itemProduct.setImageUrl(item.getImageUrl());
 
-            ItemProduct itemProductFull = itemListFull.get(position);
+            ItemProduct itemProductFull = getItemFromCursor(position);
             itemProductFull.setName(item.getName());
             itemProductFull.setTags(item.getTags());
             itemProductFull.setPrice(item.getPrice());
@@ -173,45 +171,32 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
         }
 
-    }
+    }*/
 
-    public void updateFavoriteState(ItemProduct item){
+    /*public void updateFavoriteState(ItemProduct item){
 
         int position = getItemById(item.getId());
 
         if(position != -1){
 
-            ItemProduct itemProduct = itemList.get(position);
+            ItemProduct itemProduct = getItemFromCursor(position);
             itemProduct.setFavorite(item.isFavorite());
 
         }
 
-    }
-
-    private int getItemById(String id){
-
-        int i = 0;
-        for(ItemProduct product: itemList) {
-            if(product.getId().equals(id))
-                return i;
-            i++;
-        }
-
-        return -1;
-
-    }
+    }*/
 
     /**
      * Metodo que filtra los productos por favoritos
      * @param filter Aplicar filtro
      */
-    public void setFavoriteFilter(boolean filter){
+    /*public void setFavoriteFilter(boolean filter){
 
         IFilterAdapter favoriteFilter = (item, tags) -> item.isFavorite();
 
         setFilter(favoriteFilter, filter, null);
 
-    }
+    }*/
 
     /**
      * Metodo que filtra los productos de la lista mediante
@@ -219,7 +204,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
      * @param filter Aplicar el filtro
      * @param tagsToFilter Tags que se desean filtrar
      */
-    public void setTagsFilter(boolean filter, Tag[] tagsToFilter){
+    /*public void setTagsFilter(boolean filter, Tag[] tagsToFilter){
 
         IFilterAdapter tagsFilter = (item, tags) -> {
 
@@ -249,14 +234,14 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
         setFilter(tagsFilter, filter, tagsToFilter);
 
-    }
+    }*/
 
     /**
      * @param iFilter Forma de aplicar el filtro
      * @param filter Aplicar filtro
      * @param tags Tags para filtrar
      */
-    private void setFilter(IFilterAdapter iFilter, boolean filter, Tag[] tags){
+    /*private void setFilter(IFilterAdapter iFilter, boolean filter, Tag[] tags){
 
         itemList.clear();
 
@@ -281,13 +266,13 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
         notifyDataSetChanged();
 
-    }
+    }*/
 
     /**
      * Ordena la lista de productos por precio
      * @param ascendente Ordenar ascendentemente
      */
-    public void orderByPrice(boolean ascendente){
+    /*public void orderByPrice(boolean ascendente){
 
         itemList.sort((itemProduct, itemProduct2) -> {
 
@@ -311,14 +296,14 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         });
         notifyDataSetChanged();
 
-    }
+    }*/
 
     /**
      * Interfaz que implementa la forma de filtrar un producto
      */
-    private interface IFilterAdapter{
+    /*private interface IFilterAdapter{
         boolean filterItem(ItemProduct item, Tag[] tags);
-    }
+    }*/
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -342,7 +327,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
                 int position = getAdapterPosition();
 
                 if(position != RecyclerView.NO_POSITION)
-                    cardAction.onCardItemClick(view, itemList.get(position), editMode);
+                    cardAction.onCardItemClick(view, getItemFromCursor(position), editMode);
 
             });
 
@@ -350,10 +335,8 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
                 int position = getAdapterPosition();
 
-                if(position != RecyclerView.NO_POSITION) {
-                    cardAction.onCardItemRemoved(view, itemList.get(position));
-                    removeItem(view, position);
-                }
+                if(position != RecyclerView.NO_POSITION)
+                    animateItemDelete(view, position);
 
             });
 
