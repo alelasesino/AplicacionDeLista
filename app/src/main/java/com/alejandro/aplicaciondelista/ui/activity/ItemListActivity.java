@@ -1,6 +1,7 @@
 package com.alejandro.aplicaciondelista.ui.activity;
 
 import android.app.ActivityOptions;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
@@ -34,6 +38,7 @@ import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.model.Tag;
+import com.alejandro.aplicaciondelista.model.db.ProductProvider;
 import com.alejandro.aplicaciondelista.model.db.ProductSQLiteHelper;
 import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
 import com.alejandro.aplicaciondelista.ui.dialog.FilterDialogFragment;
@@ -50,7 +55,7 @@ import java.util.Set;
 /**
  * Clase que controla la Activity principal de la aplicacion que muestra la lista de los productos
  */
-public class ItemListActivity extends AppCompatActivity implements ItemCardActionListener, ItemCustomActionListener {
+public class ItemListActivity extends AppCompatActivity implements ItemCardActionListener, ItemCustomActionListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int CUSTOM_ACTIVITY = 1;
     private static final int DETAILS_ACTIVITY = 2;
@@ -63,15 +68,15 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private ItemCustomFragment itemCustomFragment;
     private ItemDetailFragment itemDetailFragment;
     private ItemProduct currentItem;
-    private SQLiteDatabase database;
+    //private SQLiteDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        ProductSQLiteHelper productHelper = new ProductSQLiteHelper(this, "ProductsDB", null, 1);
-        database = productHelper.getWritableDatabase();
+        //ProductSQLiteHelper productHelper = new ProductSQLiteHelper(this, "ProductsDB", null, 1);
+        //database = productHelper.getWritableDatabase();
 
         //ItemContent.loadItemsSQLite(productHelper, () -> setupRecyclerView(findViewById(R.id.item_list)));
 
@@ -86,6 +91,20 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         setupRecyclerView(findViewById(R.id.item_list));
         setupFloatingButtons();
 
+        //getSupportLoaderManager().restartLoader(1, null, this);
+
+        String[] projection = new String[] {
+                ProductProvider.ItemProduct._ID,
+                ProductProvider.ItemProduct.COLUMN_NAME,
+                ProductProvider.ItemProduct.COLUMN_DETAILS,
+                ProductProvider.ItemProduct.COLUMN_IMAGE_URL };
+        ContentResolver cr = getContentResolver();
+        Cursor cur = cr.query(ProductProvider.CONTENT_URI,
+                projection, //Columnas a devolver
+                null,       //Condición de la query
+                null,       //Argumentos variables de la query
+                null);
+        Log.d("PRUEBA", "CUROSR: " + cur);
     }
 
     /**
@@ -95,13 +114,13 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
 
-        itemAdapter = new ItemViewAdapter(this, this, getAllProducts());
+        itemAdapter = new ItemViewAdapter(this, this);
 
         recyclerView.setAdapter(itemAdapter);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, largeScreen));
 
     }
-
+/*
     private Cursor getAllProducts(){
         return database.query("Product", new String[]{"*"}, null, null, null, null, null);
     }
@@ -117,14 +136,14 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private void updateItem(ItemProduct item){
 
         ContentValues cv = getItemContentValues(item);
-        database.update("Product", cv, ItemProduct.COLUMN_ID + " = ?", new String[]{item.getId()});
+        database.update("Product", cv, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{item.getId()});
         itemAdapter.changeCursor(getAllProducts());
 
     }
 
     private void removeItem(String id){
 
-        database.delete("Product", ItemProduct.COLUMN_ID + " = ?", new String[]{id});
+        database.delete("Product", ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{id});
         itemAdapter.changeCursor(getAllProducts());
 
     }
@@ -132,20 +151,20 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private void updateFavoriteItem(String id, boolean isFavorite){
 
         ContentValues cv = new ContentValues();
-        cv.put(ItemProduct.COLUMN_FAVORITE, isFavorite ? 1 : 0);
-        database.update("Product", cv, ItemProduct.COLUMN_ID + " = ?", new String[]{id});
+        cv.put(ProductProvider.ItemProduct.COLUMN_FAVORITE, isFavorite ? 1 : 0);
+        database.update("Product", cv, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{id});
         itemAdapter.changeCursor(getAllProducts());
 
-    }
+    }*/
 
     private ContentValues getItemContentValues(ItemProduct item) {
 
         ContentValues cv = new ContentValues();
-        cv.put(ItemProduct.COLUMN_IMAGE_URL, item.getImageUrl());
-        cv.put(ItemProduct.COLUMN_NAME, item.getName());
-        cv.put(ItemProduct.COLUMN_DETAILS, item.getDetails());
-        cv.put(ItemProduct.COLUMN_PRICE, item.getPrice());
-        cv.put(ItemProduct.COLUMN_FAVORITE, item.isFavorite() ? 1 : 0);
+        cv.put(ProductProvider.ItemProduct.COLUMN_IMAGE_URL, item.getImageUrl());
+        cv.put(ProductProvider.ItemProduct.COLUMN_NAME, item.getName());
+        cv.put(ProductProvider.ItemProduct.COLUMN_DETAILS, item.getDetails());
+        cv.put(ProductProvider.ItemProduct.COLUMN_PRICE, item.getPrice());
+        cv.put(ProductProvider.ItemProduct.COLUMN_FAVORITE, item.isFavorite() ? 1 : 0);
 
         return cv;
 
@@ -390,11 +409,11 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     @Override
     public void onSaveItemCustom(ItemProduct item) {
-
+/*
         if(!itemAdapter.getEditMode())
             insertItem(item);
         else
-            updateItem(item);
+            updateItem(item);*/
 
         removeFragments();
 
@@ -407,7 +426,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
             if(item.getId().equals(currentItem.getId()))
                 removeFragments();
 
-        removeItem(item.getId());
+        //removeItem(item.getId());
 
     }
 
@@ -416,7 +435,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         if(currentItem != null){
             currentItem.setFavorite(isFavorite);
-            updateFavoriteItem(currentItem.getId(), isFavorite);
+            //updateFavoriteItem(currentItem.getId(), isFavorite);
         }
 
     }
@@ -512,4 +531,20 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        Log.d("PRUEBA", ""+ProductProvider.CONTENT_URI);
+        return new CursorLoader(this, ProductProvider.CONTENT_URI, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        Log.d("PRUEBA", "Data: " + data);
+        if(itemAdapter != null)
+            itemAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) { }
 }

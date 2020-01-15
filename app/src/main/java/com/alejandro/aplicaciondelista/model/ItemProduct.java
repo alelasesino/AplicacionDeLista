@@ -1,5 +1,6 @@
 package com.alejandro.aplicaciondelista.model;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -12,13 +13,6 @@ import java.util.UUID;
  * Clase modelo con los datos de un producto
  */
 public class ItemProduct implements Parcelable {
-
-    public static final String COLUMN_ID = "id";
-    public static final String COLUMN_IMAGE_URL = "imageUrl";
-    public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_DETAILS = "details";
-    public static final String COLUMN_PRICE = "price";
-    public static final String COLUMN_FAVORITE = "favorite";
 
     private String id;
     private String imageUrl;

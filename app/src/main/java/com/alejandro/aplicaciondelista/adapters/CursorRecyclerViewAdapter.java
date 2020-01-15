@@ -7,6 +7,7 @@ import android.database.DataSetObserver;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alejandro.aplicaciondelista.model.ItemProduct;
+import com.alejandro.aplicaciondelista.model.db.ProductProvider;
 
 public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
@@ -98,7 +99,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             if (mDataSetObserver != null) {
                 mCursor.registerDataSetObserver(mDataSetObserver);
             }
-            mRowIdColumn = newCursor.getColumnIndexOrThrow(ItemProduct.COLUMN_ID);
+            mRowIdColumn = newCursor.getColumnIndexOrThrow(ProductProvider.ItemProduct.COLUMN_ID);
             mDataValid = true;
             notifyDataSetChanged();
         } else {

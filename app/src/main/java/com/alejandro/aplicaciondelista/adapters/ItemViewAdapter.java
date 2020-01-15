@@ -22,6 +22,8 @@ import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.model.Tag;
+import com.alejandro.aplicaciondelista.model.db.ProductProvider;
+
 /**
  * Clase adaptador del recycler view que muestra la lista de los productos
  */
@@ -34,8 +36,8 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
 
     private Context context;
 
-    public ItemViewAdapter(Context context, ItemCardActionListener cardAction, Cursor cursor) {
-        super(context, cursor);
+    public ItemViewAdapter(Context context, ItemCardActionListener cardAction) {
+        super(context, null);
 
         this.context = context;
         this.cardAction = cardAction;
@@ -72,12 +74,12 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
         }
 
         ItemProduct item = new ItemProduct();
-        item.setId(cursor.getString(cursor.getColumnIndex(ItemProduct.COLUMN_ID)));
-        item.setImageUrl(cursor.getString(cursor.getColumnIndex(ItemProduct.COLUMN_IMAGE_URL)));
-        item.setName(cursor.getString(cursor.getColumnIndex(ItemProduct.COLUMN_NAME)));
-        item.setDetails(cursor.getString(cursor.getColumnIndex(ItemProduct.COLUMN_DETAILS)));
-        item.setPrice(cursor.getDouble(cursor.getColumnIndex(ItemProduct.COLUMN_PRICE)));
-        item.setFavorite(cursor.getInt(cursor.getColumnIndex(ItemProduct.COLUMN_FAVORITE)) == 1);
+        item.setId(cursor.getString(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_ID)));
+        item.setImageUrl(cursor.getString(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_IMAGE_URL)));
+        item.setName(cursor.getString(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_NAME)));
+        item.setDetails(cursor.getString(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_DETAILS)));
+        item.setPrice(cursor.getDouble(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_PRICE)));
+        item.setFavorite(cursor.getInt(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_FAVORITE)) == 1);
 
         return item;
 
@@ -99,7 +101,6 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
         animation.addAnimation(new ScaleAnimation(0.8f, 1, 0.8f, 1));
         animation.setDuration(400);
         view.startAnimation(animation);
-
 
     }
 

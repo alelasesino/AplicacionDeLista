@@ -24,7 +24,7 @@ public class ItemContent {
     public static final List<ItemProduct> ITEMS = new ArrayList<>();
 
     public static final String URL_IMAGES_BASE = "https://android-rest.000webhostapp.com/images/";
-    private static final String URL_API_REST_BASE = "https://api-rest-android.herokuapp.com/";
+    /*private static final String URL_API_REST_BASE = "https://api-rest-android.herokuapp.com/";
     private static final String URL_PRODUCTS = "products";
 
     private static final int ID_TAG = 0;
@@ -34,14 +34,14 @@ public class ItemContent {
     private static final int NAME_PRODUCT = 2;
     private static final int DETAILS_PRODUCT = 3;
     private static final int PRICE_PRODUCT = 4;
-    private static final int FAVORITE_PRODUCT = 5;
+    private static final int FAVORITE_PRODUCT = 5;*/
 
     /**
      * Metodo que obtiene los datos de la API REST y los almacena en una lista de productos
      * @param context Contexto
      * @param listener Callback cuando termine la carga de los datos
      */
-    public static void loadItemsApiRest(Context context, IItemContent listener){
+    /*public static void loadItemsApiRest(Context context, IItemContent listener){
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
@@ -154,5 +154,5 @@ public class ItemContent {
     public interface IItemContent{
         void onDataFinished();
     }
-
+*/
 }
