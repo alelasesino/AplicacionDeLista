@@ -1,6 +1,6 @@
 package com.alejandro.aplicaciondelista.model;
 
-import android.content.Context;
+/*import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -17,11 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List;*/
 
 public class ItemContent {
 
-    public static final List<ItemProduct> ITEMS = new ArrayList<>();
+    //public static final List<ItemProduct> ITEMS = new ArrayList<>();
 
     public static final String URL_IMAGES_BASE = "https://android-rest.000webhostapp.com/images/";
     /*private static final String URL_API_REST_BASE = "https://api-rest-android.herokuapp.com/";
@@ -35,7 +35,7 @@ public class ItemContent {
     private static final int DETAILS_PRODUCT = 3;
     private static final int PRICE_PRODUCT = 4;
     private static final int FAVORITE_PRODUCT = 5;*/
-
+    /*
     /**
      * Metodo que obtiene los datos de la API REST y los almacena en una lista de productos
      * @param context Contexto

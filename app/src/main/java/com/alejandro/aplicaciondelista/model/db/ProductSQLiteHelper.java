@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ProductSQLiteHelper extends SQLiteOpenHelper {
 
     private String productTable = "CREATE TABLE Product (" +
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "imageUrl TEXT, " +
             "name TEXT, " +
             "details TEXT, " +

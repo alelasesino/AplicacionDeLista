@@ -1,7 +1,6 @@
 package com.alejandro.aplicaciondelista.model.db;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -9,7 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,8 +37,8 @@ public class ProductProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         productHelper = new ProductSQLiteHelper(getContext(), BD_NOMBRE, null, BD_VERSION);
-        //resolver = getContext().getContentResolver();
         return true;
+
     }
 
     @Nullable
@@ -54,10 +52,7 @@ public class ProductProvider extends ContentProvider {
 
         SQLiteDatabase db = productHelper.getWritableDatabase();
 
-        Cursor c = db.query(PRODUCT_TABLE, projection, where, selectionArgs, null, null, sortOrder);
-        //c.setNotificationUri(resolver, ProductProvider.CONTENT_URI);
-        Log.d("PRUEBA", "query: " + c);
-        return c;
+        return db.query(PRODUCT_TABLE, projection, where, selectionArgs, null, null, sortOrder);
 
     }
 
@@ -82,7 +77,7 @@ public class ProductProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
 
-        long id = 1;
+        long id;
 
         SQLiteDatabase db = productHelper.getWritableDatabase();
 
@@ -123,7 +118,7 @@ public class ProductProvider extends ContentProvider {
     public static final class ItemProduct implements BaseColumns {
         private ItemProduct() {}
 
-        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_ID = "_id";
         public static final String COLUMN_IMAGE_URL = "imageUrl";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_DETAILS = "details";

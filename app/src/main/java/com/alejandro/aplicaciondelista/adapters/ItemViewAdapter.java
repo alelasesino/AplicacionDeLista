@@ -2,7 +2,6 @@ package com.alejandro.aplicaciondelista.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.R;
-import com.alejandro.aplicaciondelista.model.Tag;
 import com.alejandro.aplicaciondelista.model.db.ProductProvider;
 
 /**
@@ -185,7 +183,7 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
 
         }
 
-    }*/
+    }
 
     /**
      * Metodo que filtra los productos por favoritos
@@ -197,7 +195,7 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
 
         setFilter(favoriteFilter, filter, null);
 
-    }*/
+    }
 
     /**
      * Metodo que filtra los productos de la lista mediante
@@ -235,7 +233,7 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
 
         setFilter(tagsFilter, filter, tagsToFilter);
 
-    }*/
+    }
 
     /**
      * @param iFilter Forma de aplicar el filtro
@@ -267,7 +265,7 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
 
         notifyDataSetChanged();
 
-    }*/
+    }
 
     /**
      * Ordena la lista de productos por precio
@@ -297,7 +295,7 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
         });
         notifyDataSetChanged();
 
-    }*/
+    }
 
     /**
      * Interfaz que implementa la forma de filtrar un producto

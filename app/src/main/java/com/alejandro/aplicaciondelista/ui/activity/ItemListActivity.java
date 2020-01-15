@@ -1,16 +1,13 @@
 package com.alejandro.aplicaciondelista.ui.activity;
 
 import android.app.ActivityOptions;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.transition.Fade;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,11 +32,9 @@ import com.alejandro.aplicaciondelista.ItemCustomActionListener;
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.ItemViewAdapter;
-import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.model.Tag;
 import com.alejandro.aplicaciondelista.model.db.ProductProvider;
-import com.alejandro.aplicaciondelista.model.db.ProductSQLiteHelper;
 import com.alejandro.aplicaciondelista.ui.components.GridSpacingItemDecoration;
 import com.alejandro.aplicaciondelista.ui.dialog.FilterDialogFragment;
 import com.alejandro.aplicaciondelista.ui.fragment.ItemCustomFragment;
@@ -63,22 +58,15 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     /*Pantalla grande, superior a w900d*/
     private boolean largeScreen;
 
-    private RecyclerView recyclerView;
     private ItemViewAdapter itemAdapter;
     private ItemCustomFragment itemCustomFragment;
     private ItemDetailFragment itemDetailFragment;
     private ItemProduct currentItem;
-    //private SQLiteDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
-
-        //ProductSQLiteHelper productHelper = new ProductSQLiteHelper(this, "ProductsDB", null, 1);
-        //database = productHelper.getWritableDatabase();
-
-        //ItemContent.loadItemsSQLite(productHelper, () -> setupRecyclerView(findViewById(R.id.item_list)));
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,24 +75,12 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         if (findViewById(R.id.item_detail_container) != null) //large-screen layouts (res/values-w900dp)
             largeScreen = true;
 
-        //setupNavigationView(findViewById(R.id.nav_view));
+        setupNavigationView(findViewById(R.id.nav_view));
         setupRecyclerView(findViewById(R.id.item_list));
         setupFloatingButtons();
 
-        //getSupportLoaderManager().restartLoader(1, null, this);
+        loaderData();
 
-        String[] projection = new String[] {
-                ProductProvider.ItemProduct._ID,
-                ProductProvider.ItemProduct.COLUMN_NAME,
-                ProductProvider.ItemProduct.COLUMN_DETAILS,
-                ProductProvider.ItemProduct.COLUMN_IMAGE_URL };
-        ContentResolver cr = getContentResolver();
-        Cursor cur = cr.query(ProductProvider.CONTENT_URI,
-                projection, //Columnas a devolver
-                null,       //Condición de la query
-                null,       //Argumentos variables de la query
-                null);
-        Log.d("PRUEBA", "CUROSR: " + cur);
     }
 
     /**
@@ -112,7 +88,6 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
      * @param recyclerView Recycler para inicializar
      */
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        this.recyclerView = recyclerView;
 
         itemAdapter = new ItemViewAdapter(this, this);
 
@@ -120,31 +95,27 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, largeScreen));
 
     }
-/*
-    private Cursor getAllProducts(){
-        return database.query("Product", new String[]{"*"}, null, null, null, null, null);
-    }
 
     private void insertItem(ItemProduct item){
 
         ContentValues cv = getItemContentValues(item);
-        database.insert("Product", null, cv);
-        itemAdapter.changeCursor(getAllProducts());
+        getContentResolver().insert(ProductProvider.CONTENT_URI, cv);
+        loaderData();
 
     }
 
     private void updateItem(ItemProduct item){
 
         ContentValues cv = getItemContentValues(item);
-        database.update("Product", cv, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{item.getId()});
-        itemAdapter.changeCursor(getAllProducts());
+        getContentResolver().update(ProductProvider.CONTENT_URI, cv, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{item.getId()});
+        loaderData();
 
     }
 
     private void removeItem(String id){
 
-        database.delete("Product", ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{id});
-        itemAdapter.changeCursor(getAllProducts());
+        getContentResolver().delete(ProductProvider.CONTENT_URI, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{id});
+        loaderData();
 
     }
 
@@ -152,10 +123,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         ContentValues cv = new ContentValues();
         cv.put(ProductProvider.ItemProduct.COLUMN_FAVORITE, isFavorite ? 1 : 0);
-        database.update("Product", cv, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{id});
-        itemAdapter.changeCursor(getAllProducts());
+        getContentResolver().update(ProductProvider.CONTENT_URI, cv, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{id});
+        loaderData();
 
-    }*/
+    }
 
     private ContentValues getItemContentValues(ItemProduct item) {
 
@@ -170,16 +141,19 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     }
 
+    private void loaderData(){
+        getSupportLoaderManager().restartLoader(1, null, this);
+    }
+
     /**
      * Inicializa todas las acciones de los menus de la barra de navegacion lateral
      * @param navigationView Navigation para inicializar
      */
-    /*private void setupNavigationView(NavigationView navigationView){
+    private void setupNavigationView(NavigationView navigationView){
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
 
-            switch (menuItem.getItemId()){
-                case R.id.nav_all:
+            /*case R.id.nav_all:
                     itemAdapter.setTagsFilter(false, null);
                     break;
                 case R.id.nav_burgers:
@@ -193,10 +167,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
                     break;
                 case R.id.nav_salsas:
                     itemAdapter.setTagsFilter(true, new Tag[]{new Tag("Salsa")});
-                    break;
-                case R.id.nav_visit:
-                    Utils.openWeb(this, Utils.OWNER_GITHUB);
-                    break;
+                    break;*/
+
+            if (menuItem.getItemId() == R.id.nav_visit) {
+                Utils.openWeb(this, Utils.OWNER_GITHUB);
             }
 
             DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
@@ -206,7 +180,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         });
 
-    }*/
+    }
 
     /**
      * Inicializa las acciones de los botones flotantes
@@ -409,11 +383,11 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     @Override
     public void onSaveItemCustom(ItemProduct item) {
-/*
+
         if(!itemAdapter.getEditMode())
             insertItem(item);
         else
-            updateItem(item);*/
+            updateItem(item);
 
         removeFragments();
 
@@ -426,7 +400,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
             if(item.getId().equals(currentItem.getId()))
                 removeFragments();
 
-        //removeItem(item.getId());
+        removeItem(item.getId());
 
     }
 
@@ -435,18 +409,18 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         if(currentItem != null){
             currentItem.setFavorite(isFavorite);
-            //updateFavoriteItem(currentItem.getId(), isFavorite);
+            updateFavoriteItem(currentItem.getId(), isFavorite);
         }
 
     }
-
+    /*
     /**
      * El recycler view realiza un suave scroll hacia la posicion deseada
      * @param position Posicion
      */
-    public void doSmoothScroll(int position){
+     /*void doSmoothScroll(int position){
         recyclerView.smoothScrollToPosition(position);
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -534,17 +508,18 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        Log.d("PRUEBA", ""+ProductProvider.CONTENT_URI);
         return new CursorLoader(this, ProductProvider.CONTENT_URI, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        Log.d("PRUEBA", "Data: " + data);
+
         if(itemAdapter != null)
-            itemAdapter.swapCursor(data);
+            itemAdapter.changeCursor(data);
+
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) { }
+
 }
