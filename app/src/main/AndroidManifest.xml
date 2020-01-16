@@ -14,7 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <provider android:name=".model.db.ProductProvider" android:authorities="com.alejandro.aplicaciondelista"/>
+        <provider
+            android:name=".model.db.ProductProvider"
+            android:authorities="com.alejandro.aplicaciondelista"
+            android:readPermission="android.permission.permRead"
+            android:exported="true" />
 
         <activity
             android:name=".ui.activity.ItemCustomActivity"
