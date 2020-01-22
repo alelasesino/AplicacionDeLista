@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SQLite</string>
+    <string name="app_name">Image Branch</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="title_activity_custom_product">CustomProductActivity</string>
     <string name="large_text">
