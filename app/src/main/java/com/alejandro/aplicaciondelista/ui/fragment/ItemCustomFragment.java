@@ -2,14 +2,21 @@ package com.alejandro.aplicaciondelista.ui.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,17 +28,22 @@ import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
+
 /**
  * Fragmento encargado de añadir y actualizar productos
  */
 public class ItemCustomFragment extends Fragment {
 
     public static final String ARG_ITEM = "item_custom";
+    private static final int GALLERY_RESULT = 8;
+    private static final int CAMERA_RESULT = 9;
 
     private Activity activity;
     private ImageView headerImageView;
     private EditText txtName, txtDetails, txtPrice, txtTag;
     private TagViewAdapter tagAdapter;
+    private Button btnGallery, btnCamera;
 
     private ItemProduct currentItem;
     private ItemCustomActionListener customActionListener;
@@ -110,6 +122,8 @@ public class ItemCustomFragment extends Fragment {
             txtName = activity.findViewById(R.id.txt_name);
             txtPrice = activity.findViewById(R.id.txt_price);
             btSave = activity.findViewById(R.id.fab_save_item);
+            btnGallery = activity.findViewById(R.id.btn_gallery);
+            btnCamera = activity.findViewById(R.id.btn_camera);
 
         }
 
@@ -137,6 +151,24 @@ public class ItemCustomFragment extends Fragment {
                     txtTag.setText("");
 
                 }
+
+            });
+
+        if(btnGallery != null)
+            btnGallery.setOnClickListener(view -> {
+                Intent intent = new Intent(Intent.ACTION_PICK, Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, GALLERY_RESULT);
+            });
+
+        if(btnCamera != null)
+            btnCamera.setOnClickListener(view -> {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Uri uriFoto = Uri.fromFile(new File(
+                                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+File.separator
+                                        +"img_" + (System.currentTimeMillis() / 1000) + ".jpg"));
+
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uriFoto);
+                startActivityForResult(intent, CAMERA_RESULT);
 
             });
 
@@ -178,4 +210,25 @@ public class ItemCustomFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GALLERY_RESULT && resultCode == Activity.RESULT_OK) {
+
+            Uri uri = data.getData();
+
+            if(uri != null){
+                headerImageView.setImageURI(data.getData());
+                headerImageView.setVisibility(View.VISIBLE);
+            }
+
+            //ponerFoto(imageView, lugar.getFoto());
+
+        } else {
+            headerImageView.setVisibility(View.INVISIBLE);
+            Toast.makeText(activity, "Foto no cargada", Toast.LENGTH_LONG).show();
+        }
+
+    }
 }
