@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,6 +52,8 @@ public class ItemCustomFragment extends Fragment {
 
     private boolean largeScreen;
 
+    private Uri imageUri;
+
     public ItemCustomFragment(){}
 
     public ItemCustomFragment(ItemCustomActionListener customActionListener) {
@@ -61,6 +64,9 @@ public class ItemCustomFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(savedInstanceState != null)
+            imageUri = Uri.parse(savedInstanceState.getString("URI"));
+
         this.activity = getActivity();
 
         /*Si la activity que contiene este fragment es la activity que muestra la lista de productos
@@ -68,6 +74,8 @@ public class ItemCustomFragment extends Fragment {
         largeScreen = activity instanceof ItemListActivity;
 
         argumentsReceived();
+
+        Log.d("PRUEBA", "ON CREATE");
 
     }
 
@@ -156,26 +164,10 @@ public class ItemCustomFragment extends Fragment {
             });
 
         if(btnGallery != null)
-            btnGallery.setOnClickListener(view -> {
-                Intent intent = new Intent(Intent.ACTION_PICK, Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, GALLERY_RESULT);
-            });
+            btnGallery.setOnClickListener(view -> galleryImage());
 
         if(btnCamera != null)
-            btnCamera.setOnClickListener(view -> {
-
-                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                StrictMode.setVmPolicy(builder.build());
-
-                String imageName = "img_" + (System.currentTimeMillis() / 1000) + ".jpg";
-                File imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + imageName);
-                Uri uriImage = Uri.fromFile(imageFile);
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
-                startActivityForResult(intent, CAMERA_RESULT);
-
-            });
+            btnCamera.setOnClickListener(view -> captureCameraImage());
 
         bindDataProducts();
 
@@ -221,26 +213,81 @@ public class ItemCustomFragment extends Fragment {
 
         if (requestCode == GALLERY_RESULT && resultCode == Activity.RESULT_OK) {
 
-            Uri uri = data.getData();
+            imageUri = data.getData();
 
-            if(uri != null){
+            if(imageUri != null) {
                 headerImageView.setImageURI(data.getData());
                 headerImageView.setVisibility(View.VISIBLE);
             }
-
-            //ponerFoto(imageView, lugar.getFoto());
 
         } else if (requestCode == CAMERA_RESULT && resultCode == Activity.RESULT_OK){
-            Uri uri = data.getData();
+            imageUri = data.getData();
 
-            if(uri != null){
+            if(imageUri != null){
                 headerImageView.setImageURI(data.getData());
                 headerImageView.setVisibility(View.VISIBLE);
             }
+
         } else {
             headerImageView.setVisibility(View.INVISIBLE);
             Toast.makeText(activity, "Foto no cargada", Toast.LENGTH_LONG).show();
         }
 
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null)
+            imageUri = Uri.parse(savedInstanceState.getString("URI"));
+
+        Log.d("PRUEBA", "CREATED ACTIVITY");
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if(imageUri != null)
+            outState.putString("URI", imageUri.toString());
+
+        Log.d("PRUEBA", "SAVE STATE");
+
+    }
+
+    private void captureCameraImage(){
+
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        /*String imageName = "img_" + (System.currentTimeMillis() / 1000) + ".jpg";
+        File imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + imageName);
+        imageUri = Uri.fromFile(imageFile);*/
+
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photo = null;
+        try {
+
+            photo = Utils.createTemporaryFile("picture", ".jpg", activity);
+            photo.delete();
+
+        } catch (Exception e) {
+            Log.d("PRUEBA","Can't create file to take picture!");
+        }
+        imageUri = Uri.fromFile(photo);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(intent, CAMERA_RESULT);
+
+    }
+
+    private void galleryImage() {
+
+        Intent intent = new Intent(Intent.ACTION_PICK, Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, GALLERY_RESULT);
+
+    }
+
 }

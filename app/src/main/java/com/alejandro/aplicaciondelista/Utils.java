@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.text.DecimalFormat;
 
 public class Utils {
@@ -121,6 +123,16 @@ public class Utils {
         intent.setData(Uri.parse(url));
         context.startActivity(intent);
 
+    }
+
+    public static File createTemporaryFile(String part, String ext,
+                                           Context myContext) throws Exception {
+        File tempDir = myContext.getExternalCacheDir();
+        tempDir = new File(tempDir.getAbsolutePath() + "/temp/");
+        if (!tempDir.exists()) {
+            tempDir.mkdir();
+        }
+        return File.createTempFile(part, ext, tempDir);
     }
 
 }
