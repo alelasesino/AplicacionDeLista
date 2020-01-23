@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.Log;
@@ -162,12 +163,16 @@ public class ItemCustomFragment extends Fragment {
 
         if(btnCamera != null)
             btnCamera.setOnClickListener(view -> {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                Uri uriFoto = Uri.fromFile(new File(
-                                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+File.separator
-                                        +"img_" + (System.currentTimeMillis() / 1000) + ".jpg"));
 
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, uriFoto);
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+
+                String imageName = "img_" + (System.currentTimeMillis() / 1000) + ".jpg";
+                File imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + imageName);
+                Uri uriImage = Uri.fromFile(imageFile);
+
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
                 startActivityForResult(intent, CAMERA_RESULT);
 
             });
@@ -225,6 +230,13 @@ public class ItemCustomFragment extends Fragment {
 
             //ponerFoto(imageView, lugar.getFoto());
 
+        } else if (requestCode == CAMERA_RESULT && resultCode == Activity.RESULT_OK){
+            Uri uri = data.getData();
+
+            if(uri != null){
+                headerImageView.setImageURI(data.getData());
+                headerImageView.setVisibility(View.VISIBLE);
+            }
         } else {
             headerImageView.setVisibility(View.INVISIBLE);
             Toast.makeText(activity, "Foto no cargada", Toast.LENGTH_LONG).show();
