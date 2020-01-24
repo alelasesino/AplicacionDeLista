@@ -32,15 +32,14 @@
                 android:transitionName="card_image_transition"
                 android:scaleType="fitCenter"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="65dp"
-                android:visibility="invisible"/>
+                android:layout_marginBottom="65dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-                <Button
+                <!--<Button
                     android:id="@+id/btn_camera"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -52,7 +51,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/ic_insert_photo"
-                    android:layout_marginHorizontal="5dp"/>
+                    android:layout_marginHorizontal="5dp"/> -->
 
             </LinearLayout>
 

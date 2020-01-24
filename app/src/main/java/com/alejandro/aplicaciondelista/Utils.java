@@ -2,14 +2,20 @@ package com.alejandro.aplicaciondelista;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 
 public class Utils {
@@ -125,14 +131,31 @@ public class Utils {
 
     }
 
-    public static File createTemporaryFile(String part, String ext,
-                                           Context myContext) throws Exception {
+    public static File createTemporaryFile(String part, String ext, Context myContext) throws Exception {
         File tempDir = myContext.getExternalCacheDir();
         tempDir = new File(tempDir.getAbsolutePath() + "/temp/");
+        Log.d("PRUEBA","TEMP FILE: " + tempDir.getAbsolutePath());
         if (!tempDir.exists()) {
             tempDir.mkdir();
         }
         return File.createTempFile(part, ext, tempDir);
+    }
+
+    public static Bitmap getImage(Context context, Uri uri) {
+        Bitmap result = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        InputStream is;
+        try {
+            is = context.getContentResolver().openInputStream(uri);
+            result = BitmapFactory.decodeStream(is, null, options);
+            is.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

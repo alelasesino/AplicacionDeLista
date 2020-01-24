@@ -1,10 +1,11 @@
 package com.alejandro.aplicaciondelista.ui.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
@@ -163,11 +164,13 @@ public class ItemCustomFragment extends Fragment {
 
             });
 
-        if(btnGallery != null)
+        /*if(btnGallery != null)
             btnGallery.setOnClickListener(view -> galleryImage());
 
         if(btnCamera != null)
-            btnCamera.setOnClickListener(view -> captureCameraImage());
+            btnCamera.setOnClickListener(view -> cameraImage());*/
+
+        headerImageView.setOnClickListener(view -> getPhotoDialog());
 
         bindDataProducts();
 
@@ -211,20 +214,15 @@ public class ItemCustomFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == GALLERY_RESULT && resultCode == Activity.RESULT_OK) {
+        if (requestCode == GALLERY_RESULT || requestCode == CAMERA_RESULT && resultCode == Activity.RESULT_OK) {
 
-            imageUri = data.getData();
+            Uri tempUri = data.getData();
+
+            if(tempUri != null)
+                imageUri = tempUri;
 
             if(imageUri != null) {
-                headerImageView.setImageURI(data.getData());
-                headerImageView.setVisibility(View.VISIBLE);
-            }
-
-        } else if (requestCode == CAMERA_RESULT && resultCode == Activity.RESULT_OK){
-            imageUri = data.getData();
-
-            if(imageUri != null){
-                headerImageView.setImageURI(data.getData());
+                headerImageView.setImageURI(imageUri);
                 headerImageView.setVisibility(View.VISIBLE);
             }
 
@@ -257,15 +255,10 @@ public class ItemCustomFragment extends Fragment {
 
     }
 
-    private void captureCameraImage(){
+    private void cameraImage(){
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
-
-        /*String imageName = "img_" + (System.currentTimeMillis() / 1000) + ".jpg";
-        File imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + imageName);
-        imageUri = Uri.fromFile(imageFile);*/
-
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File photo = null;
@@ -287,6 +280,45 @@ public class ItemCustomFragment extends Fragment {
 
         Intent intent = new Intent(Intent.ACTION_PICK, Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, GALLERY_RESULT);
+
+    }
+
+    private AlertDialog getPhotoDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                activity);
+        builder.setTitle("SELECCIONAR UNA IMAGEN");
+        builder.setPositiveButton("CAMARA", new AlertDialog.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                File photo = null;
+                try {
+                    photo = Utils.createTemporaryFile("picture", ".jpg", activity);
+                    photo.delete();
+                } catch (Exception e) {
+                    Log.v(getClass().getSimpleName(), "Can't create file to take picture!");
+                }
+                imageUri = Uri.fromFile(photo);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                startActivityForResult(intent, CAMERA_RESULT);
+
+            }
+
+        });
+        builder.setNegativeButton("GALERIA", new AlertDialog.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent, GALLERY_RESULT);
+            }
+
+        });
+
+        return builder.create();
 
     }
 
