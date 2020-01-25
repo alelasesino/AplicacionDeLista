@@ -2,6 +2,8 @@ package com.alejandro.aplicaciondelista.ui.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -10,6 +12,7 @@ import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.TagViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
+import com.alejandro.aplicaciondelista.model.db.ProductProvider;
 import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,6 +22,8 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,7 +126,27 @@ public class ItemDetailFragment extends Fragment {
 
     private void bindDataProducts(){
 
-        Utils.loadPicassoImage(activity, imageDetailsHeader, currentItem.getImageUrl());
+        if(currentItem.getImageUrl() != null && currentItem.getImageUrl().contains("://")){
+
+            String[] projection = new String[]{ProductProvider.ItemProduct.COLUMN_IMAGE};
+            String where = currentItem.getId() + "=" + BaseColumns._ID;
+
+            Cursor c = activity.getContentResolver().query(ProductProvider.CONTENT_URI, projection, where, null,null);
+            Bitmap bitmap;
+
+            if(c != null){
+                c.moveToFirst();
+                bitmap = Utils.getImage(c.getBlob(c.getColumnIndex(ProductProvider.ItemProduct.COLUMN_IMAGE)));
+                imageDetailsHeader.setImageBitmap(bitmap);
+            }
+
+        } else {
+
+            Utils.loadPicassoImage(getActivity(), imageDetailsHeader, currentItem.getImageUrl());
+
+        }
+
+        //Utils.loadPicassoImage(activity, imageDetailsHeader, currentItem.getImageUrl());
         Utils.setText(tvName, currentItem.getName());
         Utils.setText(tvDetails, currentItem.getDetails());
         Utils.setText(tvPrice, Utils.toPrice(currentItem.getPrice()));

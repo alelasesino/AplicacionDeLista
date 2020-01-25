@@ -26,8 +26,6 @@ public class ProductProvider extends ContentProvider {
     public static final int PRODUCTS = 100;
     public static final int PRODUCTS_ID = 101;
 
-    //private ContentResolver resolver;
-
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI("com.alejandro.aplicaciondelista", "products", PRODUCTS);
@@ -124,6 +122,7 @@ public class ProductProvider extends ContentProvider {
         public static final String COLUMN_DETAILS = "details";
         public static final String COLUMN_PRICE = "price";
         public static final String COLUMN_FAVORITE = "favorite";
+        public static final String COLUMN_IMAGE = "image";
 
     }
 

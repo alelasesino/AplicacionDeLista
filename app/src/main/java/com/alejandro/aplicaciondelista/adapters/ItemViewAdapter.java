@@ -2,6 +2,8 @@ package com.alejandro.aplicaciondelista.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +80,11 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
         item.setDetails(cursor.getString(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_DETAILS)));
         item.setPrice(cursor.getDouble(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_PRICE)));
         item.setFavorite(cursor.getInt(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_FAVORITE)) == 1);
+
+        byte[] blobImage = cursor.getBlob(cursor.getColumnIndex(ProductProvider.ItemProduct.COLUMN_IMAGE));
+
+        if(blobImage != null)
+            item.setImage(Utils.getImage(blobImage));
 
         return item;
 
@@ -344,10 +351,15 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
         void bind(ItemProduct item){
 
             removeCard.setVisibility(editMode ? View.VISIBLE : View.INVISIBLE);
-            Utils.loadPicassoImage(context, imageCard, item.getImageUrl());
             nameCard.setText(item.getName());
             detailsCard.setText(item.getDetails());
             priceCard.setText(Utils.toPrice(item.getPrice()));
+
+            if(item.getImageUrl().contains("://") || item.getImageUrl()  == null){
+                imageCard.setImageBitmap(item.getImage());
+            } else {
+                Utils.loadPicassoImage(context, imageCard, item.getImageUrl());
+            }
 
         }
 

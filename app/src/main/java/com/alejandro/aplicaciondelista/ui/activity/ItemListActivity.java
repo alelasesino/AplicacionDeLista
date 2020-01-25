@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.transition.Fade;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -136,6 +138,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         cv.put(ProductProvider.ItemProduct.COLUMN_DETAILS, item.getDetails());
         cv.put(ProductProvider.ItemProduct.COLUMN_PRICE, item.getPrice());
         cv.put(ProductProvider.ItemProduct.COLUMN_FAVORITE, item.isFavorite() ? 1 : 0);
+
+        try{
+            cv.put(ProductProvider.ItemProduct.COLUMN_IMAGE, Utils.getBytes(Utils.getImage(this, Uri.parse(item.getImageUrl()))));
+        }catch (Exception e){}
 
         return cv;
 

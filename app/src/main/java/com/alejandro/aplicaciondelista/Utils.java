@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -134,7 +135,7 @@ public class Utils {
     public static File createTemporaryFile(String part, String ext, Context myContext) throws Exception {
         File tempDir = myContext.getExternalCacheDir();
         tempDir = new File(tempDir.getAbsolutePath() + "/temp/");
-        Log.d("PRUEBA","TEMP FILE: " + tempDir.getAbsolutePath());
+        //Log.d("PRUEBA","TEMP FILE: " + tempDir.getAbsolutePath());
         if (!tempDir.exists()) {
             tempDir.mkdir();
         }
@@ -156,6 +157,16 @@ public class Utils {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.alejandro.aplicaciondelista.model;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -21,6 +22,7 @@ public class ItemProduct implements Parcelable {
     //private String[] tags;
     private Tag[] tags;
     private boolean favorite;
+    private Bitmap image;
 
     public ItemProduct(){
         id = UUID.randomUUID().toString();
@@ -121,6 +123,14 @@ public class ItemProduct implements Parcelable {
         this.favorite = favorite;
     }
 
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -131,6 +141,7 @@ public class ItemProduct implements Parcelable {
                 /*", details='" + details + '\'' +*/
                 ", price=" + price +
                 ", tags=" + Arrays.toString(tags) +
+                ", image=" + image +
                 '}';
     }
 

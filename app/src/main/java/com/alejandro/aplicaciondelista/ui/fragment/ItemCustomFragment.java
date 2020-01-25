@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.Log;
@@ -28,6 +31,7 @@ import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.TagViewAdapter;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
+import com.alejandro.aplicaciondelista.model.db.ProductProvider;
 import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -46,7 +50,6 @@ public class ItemCustomFragment extends Fragment {
     private ImageView headerImageView;
     private EditText txtName, txtDetails, txtPrice, txtTag;
     private TagViewAdapter tagAdapter;
-    private Button btnGallery, btnCamera;
 
     private ItemProduct currentItem;
     private ItemCustomActionListener customActionListener;
@@ -75,8 +78,6 @@ public class ItemCustomFragment extends Fragment {
         largeScreen = activity instanceof ItemListActivity;
 
         argumentsReceived();
-
-        Log.d("PRUEBA", "ON CREATE");
 
     }
 
@@ -132,8 +133,6 @@ public class ItemCustomFragment extends Fragment {
             txtName = activity.findViewById(R.id.txt_name);
             txtPrice = activity.findViewById(R.id.txt_price);
             btSave = activity.findViewById(R.id.fab_save_item);
-            btnGallery = activity.findViewById(R.id.btn_gallery);
-            btnCamera = activity.findViewById(R.id.btn_camera);
 
         }
 
@@ -170,7 +169,7 @@ public class ItemCustomFragment extends Fragment {
         if(btnCamera != null)
             btnCamera.setOnClickListener(view -> cameraImage());*/
 
-        headerImageView.setOnClickListener(view -> getPhotoDialog());
+        headerImageView.setOnClickListener(view -> getPhotoDialog().show());
 
         bindDataProducts();
 
@@ -188,7 +187,27 @@ public class ItemCustomFragment extends Fragment {
 
     private void bindDataProducts(){
 
-        Utils.loadPicassoImage(getActivity(), headerImageView, currentItem.getImageUrl());
+        if(currentItem.getImageUrl() != null && currentItem.getImageUrl().contains("://")){
+
+            String[] projection = new String[]{ProductProvider.ItemProduct.COLUMN_IMAGE};
+            String where = currentItem.getId() + "=" + BaseColumns._ID;
+
+            Cursor c = activity.getContentResolver().query(ProductProvider.CONTENT_URI, projection, where, null,null);
+            Bitmap bitmap;
+
+            if(c != null){
+                c.moveToFirst();
+                bitmap = Utils.getImage(c.getBlob(c.getColumnIndex(ProductProvider.ItemProduct.COLUMN_IMAGE)));
+                headerImageView.setImageBitmap(bitmap);
+            }
+
+        } else {
+
+            Utils.loadPicassoImage(getActivity(), headerImageView, currentItem.getImageUrl());
+
+        }
+
+        //Utils.loadPicassoImage(getActivity(), headerImageView, currentItem.getImageUrl());
         Utils.setText(txtName, currentItem.getName());
         Utils.setText(txtDetails, currentItem.getDetails());
 
@@ -214,22 +233,22 @@ public class ItemCustomFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == GALLERY_RESULT || requestCode == CAMERA_RESULT && resultCode == Activity.RESULT_OK) {
+        if(data != null)
+            if (requestCode == GALLERY_RESULT || requestCode == CAMERA_RESULT && resultCode == Activity.RESULT_OK) {
 
-            Uri tempUri = data.getData();
+                Uri tempUri = data.getData();
 
-            if(tempUri != null)
-                imageUri = tempUri;
+                if(tempUri != null)
+                    imageUri = tempUri;
 
-            if(imageUri != null) {
-                headerImageView.setImageURI(imageUri);
-                headerImageView.setVisibility(View.VISIBLE);
+                if(imageUri != null) {
+                    headerImageView.setImageURI(imageUri);
+                    currentItem.setImageUrl(imageUri.toString());
+                }
+
+            } else {
+                Toast.makeText(activity, "No se cargó ninguna imagen", Toast.LENGTH_LONG).show();
             }
-
-        } else {
-            headerImageView.setVisibility(View.INVISIBLE);
-            Toast.makeText(activity, "Foto no cargada", Toast.LENGTH_LONG).show();
-        }
 
     }
 
@@ -240,8 +259,6 @@ public class ItemCustomFragment extends Fragment {
         if(savedInstanceState != null)
             imageUri = Uri.parse(savedInstanceState.getString("URI"));
 
-        Log.d("PRUEBA", "CREATED ACTIVITY");
-
     }
 
     @Override
@@ -250,8 +267,6 @@ public class ItemCustomFragment extends Fragment {
 
         if(imageUri != null)
             outState.putString("URI", imageUri.toString());
-
-        Log.d("PRUEBA", "SAVE STATE");
 
     }
 
@@ -292,7 +307,7 @@ public class ItemCustomFragment extends Fragment {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                /*Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                 File photo = null;
                 try {
                     photo = Utils.createTemporaryFile("picture", ".jpg", activity);
@@ -302,7 +317,8 @@ public class ItemCustomFragment extends Fragment {
                 }
                 imageUri = Uri.fromFile(photo);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent, CAMERA_RESULT);
+                startActivityForResult(intent, CAMERA_RESULT);*/
+                cameraImage();
 
             }
 
@@ -311,9 +327,10 @@ public class ItemCustomFragment extends Fragment {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                galleryImage();
+                /*Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, GALLERY_RESULT);
+                startActivityForResult(galleryIntent, GALLERY_RESULT);*/
             }
 
         });

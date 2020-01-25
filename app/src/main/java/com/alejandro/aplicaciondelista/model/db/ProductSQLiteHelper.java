@@ -14,7 +14,8 @@ public class ProductSQLiteHelper extends SQLiteOpenHelper {
             "name TEXT, " +
             "details TEXT, " +
             "price NUMERIC, " +
-            "favorite INTEGER(1)" +
+            "favorite INTEGER(1)," +
+            "image BLOB" +
             ")";
     /*
     private String tagTable = "CREATE TABLE Tag (" +
