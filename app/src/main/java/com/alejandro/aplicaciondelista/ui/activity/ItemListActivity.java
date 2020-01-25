@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.util.Log;
@@ -15,6 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,6 +69,10 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private ItemDetailFragment itemDetailFragment;
     private ItemProduct currentItem;
 
+    private TextView progressLabel;
+    private ProgressBar progressBar;
+    private LinearLayout listContainer, progressContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +89,16 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         setupRecyclerView(findViewById(R.id.item_list));
         setupFloatingButtons();
 
-        loaderData();
+        listContainer = findViewById(R.id.list_container);
+        progressContainer = findViewById(R.id.progress_container);
+        progressBar = findViewById(R.id.progress_bar);
+        progressLabel = findViewById(R.id.progress_label);
+
+        progressContainer.setVisibility(View.VISIBLE);
+        listContainer.setVisibility(View.INVISIBLE);
+
+        //loaderData();
+        new AsyncLoadData().execute();
 
     }
 
@@ -141,7 +158,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         try{
             cv.put(ProductProvider.ItemProduct.COLUMN_IMAGE, Utils.getBytes(Utils.getImage(this, Uri.parse(item.getImageUrl()))));
-        }catch (Exception e){}
+        }catch (Exception ignored){}
 
         return cv;
 
@@ -377,6 +394,8 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        new AsyncLoadData().execute();
+
         if(requestCode == CUSTOM_ACTIVITY){
             if(data != null)
                 onSaveItemCustom(data.getParcelableExtra(ItemCustomFragment.ARG_ITEM));
@@ -527,5 +546,55 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) { }
+
+    private class AsyncLoadData extends AsyncTask<Void, Integer, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setProgress(0);
+            progressLabel.setText("0%");
+            progressContainer.setVisibility(View.VISIBLE);
+            listContainer.setVisibility(View.INVISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {}
+
+            publishProgress(23);
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {}
+
+            publishProgress(52);
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {}
+
+            publishProgress(100);
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            progressBar.setProgress(values[0]);
+            progressLabel.setText(values[0] + "%");
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
+            loaderData();
+
+            progressContainer.setVisibility(View.INVISIBLE);
+            listContainer.setVisibility(View.VISIBLE);
+        }
+    }
 
 }
