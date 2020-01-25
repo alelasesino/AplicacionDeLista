@@ -355,7 +355,7 @@ public class ItemViewAdapter extends CursorRecyclerViewAdapter<ItemViewAdapter.I
             detailsCard.setText(item.getDetails());
             priceCard.setText(Utils.toPrice(item.getPrice()));
 
-            if(item.getImageUrl().contains("://") || item.getImageUrl()  == null){
+            if(item.getImageUrl() != null && item.getImageUrl().contains("://")){
                 imageCard.setImageBitmap(item.getImage());
             } else {
                 Utils.loadPicassoImage(context, imageCard, item.getImageUrl());
