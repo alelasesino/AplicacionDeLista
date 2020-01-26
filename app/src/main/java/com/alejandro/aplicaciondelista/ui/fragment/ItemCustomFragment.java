@@ -300,40 +300,10 @@ public class ItemCustomFragment extends Fragment {
 
     private AlertDialog getPhotoDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(
-                activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("SELECCIONAR UNA IMAGEN");
-        builder.setPositiveButton("CAMARA", new AlertDialog.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                /*Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                File photo = null;
-                try {
-                    photo = Utils.createTemporaryFile("picture", ".jpg", activity);
-                    photo.delete();
-                } catch (Exception e) {
-                    Log.v(getClass().getSimpleName(), "Can't create file to take picture!");
-                }
-                imageUri = Uri.fromFile(photo);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent, CAMERA_RESULT);*/
-                cameraImage();
-
-            }
-
-        });
-        builder.setNegativeButton("GALERIA", new AlertDialog.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                galleryImage();
-                /*Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, GALLERY_RESULT);*/
-            }
-
-        });
+        builder.setPositiveButton("CAMARA", (dialog, which) -> cameraImage());
+        builder.setNegativeButton("GALERIA", (dialog, which) -> galleryImage());
 
         return builder.create();
 
