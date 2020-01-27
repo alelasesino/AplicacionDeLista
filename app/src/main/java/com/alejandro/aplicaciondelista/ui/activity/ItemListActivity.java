@@ -141,7 +141,9 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         try{
             cv.put(ProductProvider.ItemProduct.COLUMN_IMAGE, Utils.getBytes(Utils.getImage(this, Uri.parse(item.getImageUrl()))));
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         return cv;
 
