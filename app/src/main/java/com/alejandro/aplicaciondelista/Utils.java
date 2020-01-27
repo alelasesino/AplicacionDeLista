@@ -143,20 +143,26 @@ public class Utils {
     }
 
     public static Bitmap getImage(Context context, Uri uri) {
+
         Bitmap result = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         InputStream is;
+        
         try {
+
             is = context.getContentResolver().openInputStream(uri);
             result = BitmapFactory.decodeStream(is, null, options);
             is.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
+
+        if(result != null)
+            return Bitmap.createScaledBitmap(result, 400, 400, true);
+
+        return null;
+
     }
 
     public static byte[] getBytes(Bitmap bitmap) {
