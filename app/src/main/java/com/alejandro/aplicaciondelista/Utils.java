@@ -147,7 +147,7 @@ public class Utils {
         Bitmap result = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         InputStream is;
-        
+
         try {
 
             is = context.getContentResolver().openInputStream(uri);
