@@ -97,7 +97,9 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         progressContainer.setVisibility(View.VISIBLE);
         listContainer.setVisibility(View.INVISIBLE);
 
-        //loaderData();
+        progressContainer.setVisibility(View.INVISIBLE);
+        listContainer.setVisibility(View.VISIBLE);
+
         new AsyncLoadData().execute();
 
     }
@@ -119,7 +121,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         ContentValues cv = getItemContentValues(item);
         getContentResolver().insert(ProductProvider.CONTENT_URI, cv);
-        loaderData();
+        //loaderData();
 
     }
 
@@ -127,7 +129,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         ContentValues cv = getItemContentValues(item);
         getContentResolver().update(ProductProvider.CONTENT_URI, cv, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{item.getId()});
-        loaderData();
+        //loaderData();
 
     }
 
@@ -394,8 +396,6 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        new AsyncLoadData().execute();
-
         if(requestCode == CUSTOM_ACTIVITY){
             if(data != null)
                 onSaveItemCustom(data.getParcelableExtra(ItemCustomFragment.ARG_ITEM));
@@ -409,10 +409,16 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     @Override
     public void onSaveItemCustom(ItemProduct item) {
 
-        if(!itemAdapter.getEditMode())
-            insertItem(item);
-        else
-            updateItem(item);
+        IBackgroundTask task = ()->{
+
+            if(!itemAdapter.getEditMode())
+                insertItem(item);
+            else
+                updateItem(item);
+
+        };
+
+        new AsyncLoadData().execute(task);
 
         removeFragments();
 
@@ -547,7 +553,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) { }
 
-    private class AsyncLoadData extends AsyncTask<Void, Integer, Void> {
+    private class AsyncLoadData extends AsyncTask<IBackgroundTask, Integer, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -558,25 +564,24 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(IBackgroundTask... tasks) {
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {}
+            int[] delay = {1000, 2000, 2000, 1000};
+            int[] progress = {14, 48, 78, 100};
 
-            publishProgress(23);
+            int i = 0;
+            for(int del : delay){
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {}
+                publishProgress(progress[i++]);
 
-            publishProgress(52);
+                if(tasks.length > 0 && i == 2)
+                    tasks[0].backgroundTask();
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {}
+                try {
+                    Thread.sleep(del);
+                } catch (InterruptedException ignored) {}
 
-            publishProgress(100);
+            }
 
             return null;
         }
@@ -597,4 +602,8 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         }
     }
 
+}
+
+interface IBackgroundTask {
+    void backgroundTask();
 }
