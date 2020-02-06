@@ -135,8 +135,14 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
     private void removeItem(String id){
 
-        getContentResolver().delete(ProductProvider.CONTENT_URI, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{id});
-        loaderData();
+        IBackgroundTask task = ()->
+
+            getContentResolver().delete(ProductProvider.CONTENT_URI, ProductProvider.ItemProduct.COLUMN_ID + " = ?", new String[]{id})
+
+        ;
+
+        new AsyncLoadData().execute(task);
+        //loaderData();
 
     }
 
