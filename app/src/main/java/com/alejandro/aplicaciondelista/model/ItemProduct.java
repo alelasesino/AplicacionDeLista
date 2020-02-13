@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -117,6 +119,19 @@ public class ItemProduct implements Parcelable {
 
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
+    }
+
+    public String getURLEncode() throws UnsupportedEncodingException {
+
+        String[] fields_encode = new String[5];
+        fields_encode[0] = URLEncoder.encode("nombre", "UTF-8") + "=" + URLEncoder.encode(name, "UTF-8");
+        fields_encode[1] = URLEncoder.encode("descripcion", "UTF-8") + "=" + URLEncoder.encode(details, "UTF-8");
+        fields_encode[2] = URLEncoder.encode("precio", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(price), "UTF-8");
+        fields_encode[3] = URLEncoder.encode("imagen", "UTF-8") + "=" + URLEncoder.encode(imageUrl, "UTF-8");
+        fields_encode[4] = URLEncoder.encode("tags", "UTF-8") + "=" + URLEncoder.encode(String.join(";", tags), "UTF-8");
+
+        return String.join("&", fields_encode);
+
     }
 
     @NonNull
