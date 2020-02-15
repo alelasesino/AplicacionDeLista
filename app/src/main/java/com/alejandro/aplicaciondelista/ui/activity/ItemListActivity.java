@@ -21,6 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.ItemCustomActionListener;
@@ -53,6 +54,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private boolean largeScreen;
 
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefresh;
     private ItemViewAdapter itemAdapter;
     private ItemCustomFragment itemCustomFragment;
     private ItemDetailFragment itemDetailFragment;
@@ -63,7 +65,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        ItemContent.loadItemsApiRest(this, () -> setupRecyclerView(findViewById(R.id.item_list)));
+        ItemContent.loadItemsApiRest(() -> setupRecyclerView(findViewById(R.id.item_list)));
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,6 +76,18 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
         setupNavigationView(findViewById(R.id.nav_view));
         setupFloatingButtons();
+
+        swipeRefresh = findViewById(R.id.swipe_refresh);
+        swipeRefresh.setOnRefreshListener(() ->
+
+            ItemContent.loadItemsApiRest(() -> {
+
+                itemAdapter.notifyDataSetChanged();
+                swipeRefresh.setRefreshing(false);
+
+            })
+
+        );
 
     }
 

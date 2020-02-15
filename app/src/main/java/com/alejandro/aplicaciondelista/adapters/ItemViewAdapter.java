@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alejandro.aplicaciondelista.Utils;
+import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
 import com.alejandro.aplicaciondelista.ItemCardActionListener;
 import com.alejandro.aplicaciondelista.R;
@@ -126,10 +127,12 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
     }
 
     private void removeItem(View view, int position){
+        ItemContent.deleteItemApiRest(itemList.get(position));
         animateItemDelete(view, position);
     }
 
     public void addItem(ItemProduct item){
+        ItemContent.insertItemApiRest(item);
         itemList.add(item);
         itemListFull.add(item);
         ((ItemListActivity)context).doSmoothScroll(getItemCount());
@@ -138,6 +141,8 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
     }
 
     public void updateItem(ItemProduct item){
+
+        ItemContent.updateItemApiRest(item);
 
         int position = getItemById(item.getId());
 

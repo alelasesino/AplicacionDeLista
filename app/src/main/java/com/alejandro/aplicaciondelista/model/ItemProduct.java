@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -121,16 +123,18 @@ public class ItemProduct implements Parcelable {
         this.favorite = favorite;
     }
 
-    public String getURLEncode() throws UnsupportedEncodingException {
+    public Map<String, String> getMapParams() {
 
-        String[] fields_encode = new String[5];
-        fields_encode[0] = URLEncoder.encode("nombre", "UTF-8") + "=" + URLEncoder.encode(name, "UTF-8");
-        fields_encode[1] = URLEncoder.encode("descripcion", "UTF-8") + "=" + URLEncoder.encode(details, "UTF-8");
-        fields_encode[2] = URLEncoder.encode("precio", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(price), "UTF-8");
-        fields_encode[3] = URLEncoder.encode("imagen", "UTF-8") + "=" + URLEncoder.encode(imageUrl, "UTF-8");
-        fields_encode[4] = URLEncoder.encode("tags", "UTF-8") + "=" + URLEncoder.encode(String.join(";", tags), "UTF-8");
+        Map<String, String> map = new HashMap<>();
+        map.put("nombre", name);
+        map.put("descripcion", details);
+        map.put("precio", String.valueOf(price));
+        map.put("imagen", imageUrl);
 
-        return String.join("&", fields_encode);
+        if(tags.length != 0)
+            map.put("tags", String.join(";", tags));
+
+        return map;
 
     }
 

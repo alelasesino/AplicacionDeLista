@@ -11,16 +11,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/item_list"
-            android:name="com.alejandro.aplicaciondelista.ItemListFragment"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
-            tools:context=".ui.activity.ItemListActivity"
-            tools:listitem="@layout/item_list_content"/>
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/item_list"
+                android:name="com.alejandro.aplicaciondelista.ItemListFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2"
+                tools:context=".ui.activity.ItemListActivity"
+                tools:listitem="@layout/item_list_content"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/fab_main"

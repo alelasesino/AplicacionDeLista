@@ -1,57 +1,78 @@
 package com.alejandro.aplicaciondelista.model;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
-public class JsonObjectRequest extends Request<JSONObject> {
+import static java.util.stream.Collectors.joining;
+
+public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
+
+    static final String GET = "GET";
+    static final String POST = "POST";
+    static final String PUT = "PUT";
+    static final String DELETE = "DELETE";
+
+    private HttpURLConnection http;
+
+    private final String URL;
+    private String method;
+
+    private Response.Listener<JSONObject> onResponse;
+    private Response.ErrorListener<JSONObject> onErrorResponse;
 
     public JsonObjectRequest(String method,
                              String url,
                              Response.Listener<JSONObject> onResponse,
                              Response.ErrorListener<JSONObject> onErrorResponse){
-        super(url, method, onResponse, onErrorResponse);
+        this.URL  = url;
+        this.method = method;
+        this.onResponse = onResponse;
+        this.onErrorResponse = onErrorResponse;
     }
 
-    @Override
-    public JSONObject sendRequest(String params) {
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(JSONObject jsonObject) {
+    private JSONObject readResponse(){
 
         try {
 
-            if (!jsonObject.getBoolean("error")) {
-                onResponse.onResponse(jsonObject);
-                return;
-            }
+            int responseCode = http.getResponseCode();
 
-        } catch (JSONException ignored){}
+            InputStream inputStream;
 
-        onErrorResponse.onErrorResponse(jsonObject);
+            if (responseCode < HttpURLConnection.HTTP_BAD_REQUEST)
+                inputStream = http.getInputStream();
+            else
+                inputStream = http.getErrorStream();
+
+            return new JSONObject(readHttpStreamResponse(inputStream));
+
+        }catch (IOException | JSONException e){
+            e.printStackTrace();
+        }
+
+        return null;
 
     }
 
-    private JSONObject sendGetRequest() throws IOException {
+    private String readHttpStreamResponse(InputStream inputStream) {
 
-        http.setRequestMethod("GET");
-        //http.setRequestProperty("User-Agent", "");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-        int responseCode = http.getResponseCode();
+        String inputLine;
+        StringBuilder response = new StringBuilder();
 
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(http.getInputStream()));
-
-            String inputLine;
-            StringBuilder response = new StringBuilder();
+        try{
 
             while ((inputLine = reader.readLine()) != null) {
                 response.append(inputLine);
@@ -59,12 +80,32 @@ public class JsonObjectRequest extends Request<JSONObject> {
 
             reader.close();
 
-            try{
+        } catch (IOException e){
+            e.printStackTrace();
+        }
 
-                return new JSONObject(response.toString());
+        return response.toString();
 
-            }catch (JSONException ignored){}
+    }
 
+    @Override
+    protected JSONObject doInBackground(Void... voids) {
+
+        try {
+
+            URL url = new URL(URL);
+            http = (HttpURLConnection)url.openConnection();
+            http.setRequestMethod(method);
+
+            String params = joinParams();
+
+            if(params != null)
+                return sendRequest(params);
+
+            return readResponse();
+
+        } catch (IOException e){
+            e.printStackTrace();
         }
 
         return null;
@@ -72,58 +113,55 @@ public class JsonObjectRequest extends Request<JSONObject> {
     }
 
     @Override
-    public Map<String, String> getParams() {
+    protected void onPostExecute(JSONObject jsonObject) {
+
+        try {
+
+            if (jsonObject.getInt("error") == 0) {
+                if(onResponse != null)
+                    onResponse.onResponse(jsonObject);
+                return;
+            }
+
+        } catch (JSONException ignored){}
+
+        if(onErrorResponse != null)
+            onErrorResponse.onErrorResponse(jsonObject);
+
+    }
+
+    protected Map<String, String> getParams() {
         return null;
     }
 
-    private class PostRequestJSON extends JsonObjectRequest {
+    private String joinParams(){
 
-        @Override
-        public JSONObject sendRequest(String params) {
+        Map<String, String> params = getParams();
 
-            /* For POST only - START
-        con.setDoOutput(true);
-        OutputStream os = con.getOutputStream();
-        os.write(POST_PARAMS.getBytes());
-        os.flush();
-        os.close();
-         For POST only - END
+        if(params != null) {
 
-        int responseCode = con.getResponseCode();
-        System.out.println("POST Response Code :: " + responseCode);
+            return params.entrySet()
+                    .stream()
+                    .map(e -> e.getKey()+"="+e.getValue())
+                    .collect(joining("&"));
 
-        if (responseCode == HttpURLConnection.HTTP_OK) { //success
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            // print result
-            System.out.println(response.toString());
         } else {
-            System.out.println("POST request not worked");
-        }
-
-            if(item != null) {
-
-                http.setDoOutput(true);
-                http.setRequestMethod("POST");
-                http.setRequestProperty("User-Agent", "");
-
-                OutputStreamWriter output = new OutputStreamWriter(http.getOutputStream());
-                output.write(item.getURLEncode());
-                output.flush();
-                output.close();
-
-            }*/
-
             return null;
         }
+
+    }
+
+    private JSONObject sendRequest(String params) throws IOException{
+
+        http.setDoOutput(true);
+        http.setRequestProperty("User-Agent", "");
+
+        OutputStreamWriter output = new OutputStreamWriter(http.getOutputStream());
+        output.write(params);
+        output.flush();
+        output.close();
+
+        return readResponse();
 
     }
 
