@@ -22,6 +22,7 @@ public class ItemContent {
     static final String URL_PRODUCT = URL_API_REST_BASE + "product";
     static final String URL_PRODUCTS = URL_API_REST_BASE + "products";
     static final String URL_PRODUCT_ID = URL_PRODUCT + "/%s";
+    static final String URL_JWT = "?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoxNTgxODc5ODM5MTQzfQ.K7HWKqzjmKb52QSV4D6WI4TiiKR_PMTCy43xFTq2XaY";
 
     /**
      * Metodo que obtiene los datos de la API REST y los almacena en una lista de productos
@@ -29,7 +30,7 @@ public class ItemContent {
      */
     public static void loadItemsApiRest(IItemContent listener){
 
-        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.GET, URL_PRODUCTS, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.GET, URL_PRODUCTS + URL_JWT, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -98,7 +99,7 @@ public class ItemContent {
 
     public static void insertItemApiRest(ItemProduct item){
 
-        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.POST, URL_PRODUCT, response -> {
+        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.POST, URL_PRODUCT + URL_JWT, response -> {
 
             try{
 
@@ -132,7 +133,7 @@ public class ItemContent {
 
     public static void deleteItemApiRest(ItemProduct item){
 
-        String URL = String.format(URL_PRODUCT_ID, item.getId());
+        String URL = String.format(URL_PRODUCT_ID, item.getId()) + URL_JWT;
 
         JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.DELETE, URL, response -> {
 
@@ -162,7 +163,7 @@ public class ItemContent {
 
     public static void updateItemApiRest(ItemProduct item){
 
-        String URL = String.format(URL_PRODUCT_ID, item.getId());
+        String URL = String.format(URL_PRODUCT_ID, item.getId()) + URL_JWT;
 
         JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.PUT, URL, response -> {
 
