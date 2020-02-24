@@ -125,6 +125,7 @@ public class ItemContent {
             protected Map<String, String> getParams() {
                 return item.getMapParams();
             }
+
         };
 
         request.execute();
