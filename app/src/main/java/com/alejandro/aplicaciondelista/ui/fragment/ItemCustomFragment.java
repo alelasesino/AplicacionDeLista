@@ -3,6 +3,7 @@ package com.alejandro.aplicaciondelista.ui.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,9 @@ import com.alejandro.aplicaciondelista.ItemCustomActionListener;
 import com.alejandro.aplicaciondelista.R;
 import com.alejandro.aplicaciondelista.Utils;
 import com.alejandro.aplicaciondelista.adapters.TagViewAdapter;
+import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.alejandro.aplicaciondelista.model.ItemProduct;
+import com.alejandro.aplicaciondelista.ui.activity.ItemCustomActivity;
 import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -27,14 +30,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class ItemCustomFragment extends Fragment {
 
     public static final String ARG_ITEM = "item_custom";
+    public static final String ARG_UPDATE_ITEM = "update_item";
 
     private Activity activity;
+    private ItemCustomActivity customActivity;
     private ImageView headerImageView;
     private EditText txtName, txtDetails, txtPrice, txtTag;
     private TagViewAdapter tagAdapter;
 
     private ItemProduct currentItem;
     private ItemCustomActionListener customActionListener;
+    private boolean updateItem;
 
     private boolean largeScreen;
 
@@ -54,6 +60,9 @@ public class ItemCustomFragment extends Fragment {
          * significa que la pantalla es superior a w900dp*/
         largeScreen = activity instanceof ItemListActivity;
 
+        if(activity instanceof ItemCustomActivity)
+            this.customActivity = (ItemCustomActivity) activity;
+
         argumentsReceived();
 
     }
@@ -63,8 +72,10 @@ public class ItemCustomFragment extends Fragment {
         Bundle arguments = getArguments();
 
         if(arguments != null)
-            if(arguments.containsKey(ARG_ITEM))
+            if(arguments.containsKey(ARG_ITEM)) {
                 currentItem = arguments.getParcelable(ARG_ITEM);
+                updateItem = arguments.getBoolean(ARG_UPDATE_ITEM);
+            }
 
     }
 
@@ -124,7 +135,7 @@ public class ItemCustomFragment extends Fragment {
                 if(customActionListener != null)
                     customActionListener.onSaveItemCustom(getItemProductFromFields());
                 else
-                    closeActivityWithResult();
+                    sendHttpAction();
 
             });
 
@@ -141,6 +152,22 @@ public class ItemCustomFragment extends Fragment {
             });
 
         bindDataProducts();
+
+    }
+
+    private void sendHttpAction(){
+
+        ItemContent.HttpResponse response = (success) -> {
+
+            if(success)
+                closeActivityWithResult();
+
+        };
+
+        if(updateItem)
+            ItemContent.updateItemService(customActivity, getItemProductFromFields(), response);
+        else
+            ItemContent.insertItemService(customActivity, getItemProductFromFields(), response);
 
     }
 

@@ -1,6 +1,9 @@
 package com.alejandro.aplicaciondelista.model;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +21,7 @@ import static java.util.stream.Collectors.joining;
 
 public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
 
+    private final String TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoxNTgxODc5ODM5MTQzfQ.K7HWKqzjmKb52QSV4D6WI4TiiKR_PMTCy43xFTq2XaY";
     static final String GET = "GET";
     static final String POST = "POST";
     static final String PUT = "PUT";
@@ -28,17 +32,20 @@ public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
     private final String URL;
     private String method;
 
+    private ProgressDialog dialog;
     private Response.Listener<JSONObject> onResponse;
     private Response.ErrorListener<JSONObject> onErrorResponse;
 
-    public JsonObjectRequest(String method,
-                             String url,
+    public JsonObjectRequest(Context context, String method, String url,
                              Response.Listener<JSONObject> onResponse,
                              Response.ErrorListener<JSONObject> onErrorResponse){
         this.URL  = url;
         this.method = method;
         this.onResponse = onResponse;
         this.onErrorResponse = onErrorResponse;
+
+        setProgressDialog(context);
+
     }
 
     private JSONObject readResponse(){
@@ -88,6 +95,13 @@ public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
     }
 
     @Override
+    protected void onPreExecute() {
+
+        dialog.show();
+
+    }
+
+    @Override
     protected JSONObject doInBackground(Void... voids) {
 
         try {
@@ -95,11 +109,12 @@ public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
             URL url = new URL(URL);
             http = (HttpURLConnection)url.openConnection();
             http.setRequestMethod(method);
+            http.setRequestProperty("Authorization", "Bearer " + TOKEN);
 
             String params = joinParams();
 
             if(params != null)
-                return sendRequest(params);
+                sendRequest(params);
 
             return readResponse();
 
@@ -113,6 +128,8 @@ public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
 
     @Override
     protected void onPostExecute(JSONObject jsonObject) {
+
+        dialog.dismiss();
 
         try {
 
@@ -150,17 +167,42 @@ public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
 
     }
 
-    private JSONObject sendRequest(String params) throws IOException{
+    private void sendRequest(String params) throws IOException{
 
         http.setDoOutput(true);
-        http.setRequestProperty("User-Agent", "");
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
         OutputStreamWriter output = new OutputStreamWriter(http.getOutputStream());
         output.write(params);
         output.flush();
         output.close();
 
-        return readResponse();
+        //return readResponse();
+
+    }
+
+    private void setProgressDialog(Context context) {
+
+        String title = "";
+        dialog = new ProgressDialog(context);
+        Log.d("PRUEBA", method);
+        switch (method){
+            case GET:
+                title = "Cargando productos";
+                break;
+            case POST:
+                title = "Insertando producto";
+                break;
+            case DELETE:
+                title = "Borrando producto";
+                break;
+            case PUT:
+                title = "Actualizando producto";
+                break;
+        }
+
+        dialog.setTitle(title);
+        dialog.setMessage("Please wait ...");
 
     }
 

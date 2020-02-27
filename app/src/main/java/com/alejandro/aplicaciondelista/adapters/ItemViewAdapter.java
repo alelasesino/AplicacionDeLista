@@ -126,23 +126,22 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         return editMode;
     }
 
-    private void removeItem(View view, int position){
-        ItemContent.deleteItemApiRest(itemList.get(position));
+    /*private void removeItem(View view, int position){
         animateItemDelete(view, position);
-    }
+    }*/
 
-    public void addItem(ItemProduct item){
-        ItemContent.insertItemApiRest(item);
+    /*public void addItem(ItemProduct item){
+        //ItemContent.insertItemApiRest(item);
         itemList.add(item);
         itemListFull.add(item);
         ((ItemListActivity)context).doSmoothScroll(getItemCount());
         notifyItemInserted(getItemCount());
 
-    }
+    }*/
 
-    public void updateItem(ItemProduct item){
+    /*public void updateItem(ItemProduct item){
 
-        ItemContent.updateItemApiRest(item);
+        //ItemContent.updateItemApiRest(item);
 
         int position = getItemById(item.getId());
 
@@ -166,7 +165,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
         }
 
-    }
+    }*/
 
     public void updateFavoriteState(ItemProduct item){
 
@@ -336,7 +335,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
 
                 if(position != RecyclerView.NO_POSITION) {
                     cardAction.onCardItemRemoved(view, itemList.get(position));
-                    removeItem(view, position);
+                    //removeItem(view, position);
                 }
 
             });

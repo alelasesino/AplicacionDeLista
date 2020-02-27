@@ -1,6 +1,12 @@
 package com.alejandro.aplicaciondelista.model;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.alejandro.aplicaciondelista.ui.dialog.ResponseDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,18 +25,17 @@ public class ItemContent {
     public static final String URL_IMAGES_BASE = "https://android-rest.000webhostapp.com/images/";
 
     private static final String URL_API_REST_BASE = "https://api-rest-android-mysql.herokuapp.com/";
-    static final String URL_PRODUCT = URL_API_REST_BASE + "product";
-    static final String URL_PRODUCTS = URL_API_REST_BASE + "products";
-    static final String URL_PRODUCT_ID = URL_PRODUCT + "/%s";
-    static final String URL_JWT = "?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoxNTgxODc5ODM5MTQzfQ.K7HWKqzjmKb52QSV4D6WI4TiiKR_PMTCy43xFTq2XaY";
+    private static final String URL_PRODUCT = URL_API_REST_BASE + "product";
+    private static final String URL_PRODUCTS = URL_API_REST_BASE + "products";
+    private static final String URL_PRODUCT_ID = URL_PRODUCT + "/%s";
 
     /**
      * Metodo que obtiene los datos de la API REST y los almacena en una lista de productos
      * @param listener Callback cuando termine la carga de los datos
      */
-    public static void loadItemsApiRest(IItemContent listener){
+    public static void loadItemsService(Context context, IItemContent listener){
 
-        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.GET, URL_PRODUCTS + URL_JWT, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(context, JsonObjectRequest.GET, URL_PRODUCTS, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -50,7 +55,8 @@ public class ItemContent {
                     e.printStackTrace();
                 }
 
-                listener.onDataFinished();
+                if(listener != null)
+                    listener.onDataFinished();
 
             }
 
@@ -97,13 +103,15 @@ public class ItemContent {
 
     }
 
-    public static void insertItemApiRest(ItemProduct item){
+    public static void insertItemService(AppCompatActivity activity, ItemProduct item, HttpResponse listener){
 
-        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.POST, URL_PRODUCT + URL_JWT, response -> {
+        JsonObjectRequest request = new JsonObjectRequest(activity, JsonObjectRequest.POST, URL_PRODUCT, response -> {
 
             try{
 
                 Log.d("PRUEBA", "Item inserted: " + response.getJSONObject("data"));
+                if(listener != null)
+                    listener.onResponseFinished(true);
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -113,7 +121,10 @@ public class ItemContent {
 
             try{
 
+                new ResponseDialog(activity, "Insert Error", errorResponse.getString("message")).show();
                 Log.e("PRUEBA", "Error Message: " + errorResponse.getString("message"));
+                if(listener != null)
+                    listener.onResponseFinished(false);
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -132,15 +143,17 @@ public class ItemContent {
 
     }
 
-    public static void deleteItemApiRest(ItemProduct item){
+    public static void deleteItemService(AppCompatActivity activity, ItemProduct item, HttpResponse listener){
 
-        String URL = String.format(URL_PRODUCT_ID, item.getId()) + URL_JWT;
+        String URL = String.format(URL_PRODUCT_ID, item.getId());
 
-        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.DELETE, URL, response -> {
+        JsonObjectRequest request = new JsonObjectRequest(activity, JsonObjectRequest.DELETE, URL, response -> {
 
             try{
 
                 Log.d("PRUEBA", "Item deleted: " + response.getJSONObject("data"));
+                if(listener != null)
+                    listener.onResponseFinished(true);
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -150,7 +163,10 @@ public class ItemContent {
 
             try{
 
+                new ResponseDialog(activity, "Delete Error", errorResponse.getString("message")).show();
                 Log.e("PRUEBA", "Error Message: " + errorResponse.getString("message"));
+                if(listener != null)
+                    listener.onResponseFinished(false);
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -162,15 +178,17 @@ public class ItemContent {
 
     }
 
-    public static void updateItemApiRest(ItemProduct item){
+    public static void updateItemService(AppCompatActivity activity, ItemProduct item, HttpResponse listener){
 
-        String URL = String.format(URL_PRODUCT_ID, item.getId()) + URL_JWT;
+        String URL = String.format(URL_PRODUCT_ID, item.getId());
 
-        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.PUT, URL, response -> {
+        JsonObjectRequest request = new JsonObjectRequest(activity, JsonObjectRequest.PUT, URL, response -> {
 
             try{
 
                 Log.d("PRUEBA", "Item updated: " + response.getJSONObject("data"));
+                if(listener != null)
+                    listener.onResponseFinished(true);
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -180,7 +198,10 @@ public class ItemContent {
 
             try{
 
+                new ResponseDialog(activity, "Update Error", errorResponse.getString("message")).show();
                 Log.e("PRUEBA", "Error Message: " + errorResponse.getString("message"));
+                if(listener != null)
+                    listener.onResponseFinished(false);
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -200,6 +221,10 @@ public class ItemContent {
 
     public interface IItemContent{
         void onDataFinished();
+    }
+
+    public interface HttpResponse{
+        void onResponseFinished(boolean success);
     }
 
 }

@@ -132,7 +132,7 @@ public class ItemProduct implements Parcelable {
         map.put("imagen", imageUrl);
 
         if(tags.length != 0)
-            map.put("tags", String.join(";", tags));
+            map.put("tags", String.join(",", tags));
 
         return map;
 

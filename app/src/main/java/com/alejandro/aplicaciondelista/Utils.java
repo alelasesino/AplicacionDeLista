@@ -31,9 +31,14 @@ public class Utils {
      */
     public static double priceToString(String price){
 
+
         if(price.equals("")) return 0;
 
-        return Double.parseDouble(price.replace(",", ".").replace("€", ""));
+        try{
+            return Double.parseDouble(price.replace(",", ".").replace("€", ""));
+        } catch (Exception e){
+            return 0;
+        }
 
     }
 

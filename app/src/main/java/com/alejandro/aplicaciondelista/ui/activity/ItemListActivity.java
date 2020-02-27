@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.transition.Fade;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,12 +61,14 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private ItemDetailFragment itemDetailFragment;
     private ItemProduct currentItem;
 
+    private boolean updateItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        ItemContent.loadItemsApiRest(() -> setupRecyclerView(findViewById(R.id.item_list)));
+        ItemContent.loadItemsService(this, () -> setupRecyclerView(findViewById(R.id.item_list)));
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,7 +83,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
         swipeRefresh = findViewById(R.id.swipe_refresh);
         swipeRefresh.setOnRefreshListener(() ->
 
-            ItemContent.loadItemsApiRest(() -> {
+            ItemContent.loadItemsService(this, () -> {
 
                 itemAdapter.notifyDataSetChanged();
                 swipeRefresh.setRefreshing(false);
@@ -175,6 +178,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     private void createNewItem(){
 
         currentItem = new ItemProduct();
+        updateItem = false;
 
         if(largeScreen)
             launchCustomFragment();
@@ -229,9 +233,9 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
      */
     private void launchCustomActivity(View card){
 
-
         Intent intent = new Intent(this, ItemCustomActivity.class);
         intent.putExtra(ItemCustomFragment.ARG_ITEM, currentItem);
+        intent.putExtra(ItemCustomFragment.ARG_UPDATE_ITEM, updateItem);
 
         if(card != null){
 
@@ -274,6 +278,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     @Override
     public void onCardItemClick(View card, ItemProduct item, boolean editMode){
         this.currentItem = item;
+        this.updateItem = editMode;
 
         if (largeScreen)
             if(editMode)
@@ -345,10 +350,11 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     @Override
     public void onSaveItemCustom(ItemProduct item) {
 
-        if(!itemAdapter.getEditMode())
-            itemAdapter.addItem(item);
-        else
-            itemAdapter.updateItem(item);
+        ItemContent.loadItemsService(this, () ->
+
+            itemAdapter.notifyDataSetChanged()
+
+        );
 
         removeFragments();
 
@@ -357,9 +363,13 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
     @Override
     public void onCardItemRemoved(View card, ItemProduct item) {
 
-        if(currentItem != null)
-            if(item.getId().equals(currentItem.getId()))
-                removeFragments();
+        ItemContent.deleteItemService(this, item, (success) -> {
+
+            ItemContent.loadItemsService(this, () -> itemAdapter.notifyDataSetChanged());
+
+        });
+
+        removeFragments();
 
     }
 
