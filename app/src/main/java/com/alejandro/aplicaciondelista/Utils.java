@@ -2,12 +2,20 @@ package com.alejandro.aplicaciondelista;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.alejandro.aplicaciondelista.model.ItemContent;
 import com.squareup.picasso.Picasso;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 
 public class Utils {
@@ -108,7 +116,7 @@ public class Utils {
     public static void loadPicassoImage(Context context, ImageView imageView, String urlImage){
 
         if(imageView != null){
-            String URL = ItemContent.URL_IMAGES_BASE + getDensityString(context.getResources().getDisplayMetrics()) + urlImage + ".png";
+            String URL = ItemContent.URL_IMAGES_BASE + urlImage;
             Picasso.with(context).load(URL).placeholder(R.drawable.ic_broken_image_black).into(imageView);
         }
 
@@ -125,6 +133,49 @@ public class Utils {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         context.startActivity(intent);
+
+    }
+
+    public static File createTemporaryFile(String part, String ext, Context myContext) throws Exception {
+
+        File tempDir = myContext.getExternalCacheDir();
+        tempDir = new File(tempDir.getAbsolutePath() + "/temp/");
+
+        if (!tempDir.exists())
+            tempDir.mkdir();
+
+        return File.createTempFile(part, ext, tempDir);
+
+    }
+
+    public static Bitmap getImage(Context context, Uri uri) {
+
+        Bitmap result = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        InputStream is;
+
+        try {
+
+            is = context.getContentResolver().openInputStream(uri);
+            result = BitmapFactory.decodeStream(is, null, options);
+            is.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(result != null)
+            return Bitmap.createScaledBitmap(result, 400, 400, true);
+
+        return null;
+    }
+
+    public static byte[] getBytes(Bitmap bitmap) {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+        return stream.toByteArray();
 
     }
 

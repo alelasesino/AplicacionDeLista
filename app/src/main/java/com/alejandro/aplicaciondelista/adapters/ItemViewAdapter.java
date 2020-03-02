@@ -345,7 +345,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.ItemVi
         void bind(ItemProduct item){
 
             removeCard.setVisibility(editMode ? View.VISIBLE : View.INVISIBLE);
-            Utils.loadPicassoImage(context, imageCard, item.getImageUrl());
+            Utils.loadPicassoImage(context, imageCard, item.getId());
             nameCard.setText(item.getName());
             detailsCard.setText(item.getDetails());
             priceCard.setText(Utils.toPrice(item.getPrice()));

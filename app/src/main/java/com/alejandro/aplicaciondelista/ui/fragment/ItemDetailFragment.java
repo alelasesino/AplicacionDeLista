@@ -121,7 +121,7 @@ public class ItemDetailFragment extends Fragment {
 
     private void bindDataProducts(){
 
-        Utils.loadPicassoImage(activity, imageDetailsHeader, currentItem.getImageUrl());
+        Utils.loadPicassoImage(activity, imageDetailsHeader, currentItem.getId());
         Utils.setText(tvName, currentItem.getName());
         Utils.setText(tvDetails, currentItem.getDetails());
         Utils.setText(tvPrice, Utils.toPrice(currentItem.getPrice()));

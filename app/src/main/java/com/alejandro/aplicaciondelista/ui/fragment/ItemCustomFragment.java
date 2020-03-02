@@ -1,8 +1,12 @@
 package com.alejandro.aplicaciondelista.ui.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +31,8 @@ import com.alejandro.aplicaciondelista.ui.activity.ItemCustomActivity;
 import com.alejandro.aplicaciondelista.ui.activity.ItemListActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
+
 /**
  * Fragmento encargado de añadir y actualizar productos
  */
@@ -32,12 +41,16 @@ public class ItemCustomFragment extends Fragment {
     public static final String ARG_ITEM = "item_custom";
     public static final String ARG_UPDATE_ITEM = "update_item";
 
+    private static final int GALLERY_RESULT = 8;
+    private static final int CAMERA_RESULT = 9;
+
     private Activity activity;
     private ItemCustomActivity customActivity;
     private ImageView headerImageView;
     private EditText txtName, txtDetails, txtPrice, txtTag;
     private TagViewAdapter tagAdapter;
 
+    private Uri imageUri;
     private ItemProduct currentItem;
     private ItemCustomActionListener customActionListener;
     private boolean updateItem;
@@ -53,6 +66,9 @@ public class ItemCustomFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null)
+            imageUri = Uri.parse(savedInstanceState.getString("URI"));
 
         this.activity = getActivity();
 
@@ -151,6 +167,8 @@ public class ItemCustomFragment extends Fragment {
 
             });
 
+        headerImageView.setOnClickListener(view -> getPhotoDialog().show());
+
         bindDataProducts();
 
     }
@@ -183,7 +201,7 @@ public class ItemCustomFragment extends Fragment {
 
     private void bindDataProducts(){
 
-        Utils.loadPicassoImage(getActivity(), headerImageView, currentItem.getImageUrl());
+        Utils.loadPicassoImage(getActivity(), headerImageView, currentItem.getId());
         Utils.setText(txtName, currentItem.getName());
         Utils.setText(txtDetails, currentItem.getDetails());
 
@@ -203,6 +221,86 @@ public class ItemCustomFragment extends Fragment {
             initializeComponents(rootView);
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(data != null)
+            if (requestCode == GALLERY_RESULT || requestCode == CAMERA_RESULT && resultCode == Activity.RESULT_OK) {
+
+                Uri tempUri = data.getData();
+
+                if(tempUri != null)
+                    imageUri = tempUri;
+
+                if(imageUri != null) {
+                    headerImageView.setImageURI(imageUri);
+                    currentItem.setImageUrl(imageUri.toString());
+                }
+
+            } else {
+                Toast.makeText(activity, "No se cargó ninguna imagen", Toast.LENGTH_LONG).show();
+            }
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null)
+            imageUri = Uri.parse(savedInstanceState.getString("URI"));
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if(imageUri != null)
+            outState.putString("URI", imageUri.toString());
+
+    }
+
+    private void cameraImage(){
+
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photo = null;
+        try {
+
+            photo = Utils.createTemporaryFile("picture", ".jpg", activity);
+            photo.delete();
+
+        } catch (Exception e) {
+            Log.d("PRUEBA","Can't create file to take picture!");
+        }
+        imageUri = Uri.fromFile(photo);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(intent, CAMERA_RESULT);
+
+    }
+
+    private void galleryImage() {
+
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, GALLERY_RESULT);
+
+    }
+
+    private AlertDialog getPhotoDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("SELECCIONAR UNA IMAGEN");
+        builder.setPositiveButton("CAMARA", (dialog, which) -> cameraImage());
+        builder.setNegativeButton("GALERIA", (dialog, which) -> galleryImage());
+
+        return builder.create();
+
     }
 
 }

@@ -22,9 +22,12 @@ public class ItemContent {
 
     public static final List<ItemProduct> ITEMS = new ArrayList<>();
 
-    public static final String URL_IMAGES_BASE = "https://android-rest.000webhostapp.com/images/";
+    //public static final String URL_IMAGES_BASE = "https://android-rest.000webhostapp.com/images/";
 
     private static final String URL_API_REST_BASE = "https://api-rest-android-mysql.herokuapp.com/";
+    //private static final String URL_API_REST_BASE = "http://10.0.2.2:5555/";
+
+    public static final String URL_IMAGES_BASE = URL_API_REST_BASE + "image/";
     private static final String URL_PRODUCT = URL_API_REST_BASE + "product";
     private static final String URL_PRODUCTS = URL_API_REST_BASE + "products";
     private static final String URL_PRODUCT_ID = URL_PRODUCT + "/%s";
@@ -65,9 +68,11 @@ public class ItemContent {
                 ItemProduct itemProduct = new ItemProduct();
                 itemProduct.setId(producto.getString("_id"));
                 itemProduct.setDetails(producto.getString("descripcion"));
-                itemProduct.setImageUrl(producto.getString("imagen"));
                 itemProduct.setName(producto.getString("nombre"));
                 itemProduct.setPrice(producto.getDouble("precio"));
+
+                if(producto.has("imagen"))
+                    itemProduct.setImageUrl(producto.getString("imagen"));
 
                 if(producto.has("tags"))
                     itemProduct.setTags(getItemTags(producto.getJSONArray("tags")));
@@ -90,7 +95,8 @@ public class ItemContent {
 
             try{
 
-                Log.e("PRUEBA", response.getString("message"));
+                if(response != null)
+                    Log.e("PRUEBA", response.getString("message"));
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -121,10 +127,14 @@ public class ItemContent {
 
             try{
 
-                new ResponseDialog(activity, "Insert Error", errorResponse.getString("message")).show();
-                Log.e("PRUEBA", "Error Message: " + errorResponse.getString("message"));
-                if(listener != null)
-                    listener.onResponseFinished(false);
+                if(errorResponse != null) {
+
+                    new ResponseDialog(activity, "Insert Error", errorResponse.getString("message")).show();
+                    Log.e("PRUEBA", "Error Message: " + errorResponse.getString("message"));
+                    if (listener != null)
+                        listener.onResponseFinished(false);
+
+                }
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -163,10 +173,14 @@ public class ItemContent {
 
             try{
 
-                new ResponseDialog(activity, "Delete Error", errorResponse.getString("message")).show();
-                Log.e("PRUEBA", "Error Message: " + errorResponse.getString("message"));
-                if(listener != null)
-                    listener.onResponseFinished(false);
+                if(errorResponse != null){
+
+                    new ResponseDialog(activity, "Delete Error", errorResponse.getString("message")).show();
+                    Log.e("PRUEBA", "Error Message: " + errorResponse.getString("message"));
+                    if(listener != null)
+                        listener.onResponseFinished(false);
+
+                }
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -198,10 +212,14 @@ public class ItemContent {
 
             try{
 
-                new ResponseDialog(activity, "Update Error", errorResponse.getString("message")).show();
-                Log.e("PRUEBA", "Error Message: " + errorResponse.getString("message"));
-                if(listener != null)
-                    listener.onResponseFinished(false);
+                if(errorResponse != null){
+
+                    new ResponseDialog(activity, "Update Error", errorResponse.getString("message")).show();
+                    Log.e("PRUEBA", "Error Message: " + errorResponse.getString("message"));
+                    if(listener != null)
+                        listener.onResponseFinished(false);
+
+                }
 
             } catch (JSONException e){
                 e.printStackTrace();
