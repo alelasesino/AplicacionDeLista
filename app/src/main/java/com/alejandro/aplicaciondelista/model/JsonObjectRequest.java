@@ -196,7 +196,6 @@ public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
 
                     if(bitmap != null) {
                         addFilePart(key, bitmap);
-                        Log.d("PRUEBA", "HAY IMAGEN");
                     }
 
                 }
@@ -217,7 +216,7 @@ public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
 
         String title = "";
         dialog = new ProgressDialog(context);
-        Log.d("PRUEBA", method);
+
         switch (method){
             case GET:
                 title = "Cargando productos";
@@ -241,7 +240,7 @@ public class JsonObjectRequest extends AsyncTask<Void, Integer, JSONObject> {
     public void addFormField(String name, String value) {
         writer.append("--" + boundary).append(LINE_FEED);
         writer.append("Content-Disposition: form-data; name=\"" + name + "\"").append(LINE_FEED);
-        //writer.append("Content-Type: text/plain; charset=" + charset).append(LINE_FEED);
+        writer.append("Content-Type: text/plain; charset=" + charset).append(LINE_FEED);
         writer.append(LINE_FEED);
         writer.append(value).append(LINE_FEED);
         writer.flush();
