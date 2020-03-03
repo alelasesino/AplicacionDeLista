@@ -27,10 +27,10 @@ public class ItemContent {
     private static final String URL_API_REST_BASE = "https://api-rest-android-mysql.herokuapp.com/";
     //private static final String URL_API_REST_BASE = "http://10.0.2.2:5555/";
 
-    public static final String URL_IMAGES_BASE = URL_API_REST_BASE + "image/";
     private static final String URL_PRODUCT = URL_API_REST_BASE + "product";
     private static final String URL_PRODUCTS = URL_API_REST_BASE + "products";
     private static final String URL_PRODUCT_ID = URL_PRODUCT + "/%s";
+    public static final String URL_IMAGES_BASE = URL_PRODUCT + "/image/";
 
     /**
      * Metodo que obtiene los datos de la API REST y los almacena en una lista de productos
