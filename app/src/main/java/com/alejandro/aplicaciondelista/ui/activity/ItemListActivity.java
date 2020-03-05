@@ -85,6 +85,7 @@ public class ItemListActivity extends AppCompatActivity implements ItemCardActio
 
             ItemContent.loadItemsService(this, () -> {
 
+                recyclerView.getRecycledViewPool().clear();
                 itemAdapter.notifyDataSetChanged();
                 swipeRefresh.setRefreshing(false);
 
